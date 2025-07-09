@@ -3,3 +3,7 @@ Flask
 requests
 RPi.GPIO
 gpiozero
+google-genai
+elevenlabs[pyaudio]
+pyaudio
+python-dotenv

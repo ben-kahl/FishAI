@@ -1,6 +1,9 @@
 import atexit  # Import atexit for cleanup
 from flask import Flask, render_template, request
 from fish import Fish
+import gemini_handler
+import voice_output
+
 
 app = Flask(__name__)
 fish_instance = None  # Initialize as None
@@ -57,6 +60,22 @@ def control_fish():
         return "Mouth moved in!"
     else:
         return "Invalid action", 400
+
+
+@app.route('/ask_gemini', methods=['POST'])
+def ask_gemini():
+    user_text = request.form.get('user_text')
+    if not user_text:
+        return 'No text input into form', 400
+
+    gemini_res = gemini_handler.gemini_request(user_text)
+
+    my_voice_id = ''
+    try:
+        voice_output.generate_speech(gemini_res, voice_id=my_voice_id)
+        return 'Success', 200
+    except Exception as e:
+        print(f'Error generating speech: {e}')
 
 
 if __name__ == '__main__':

@@ -17,42 +17,37 @@ class Fish:
         self.__tailb = 14
         self.__mouthf = 2
         self.__mouthb = 3
-        self.__head_motor = Motor(self.__headf, self.__headb)
-        self.__tail_motor = Motor(self.__tailf, self.__tailb)
-        self.__mouth_motor = Motor(self.__mouthf, self.__mouthb)
+        # Make these accessible for cleanup by removing the double underscore
+        self.head_motor = Motor(self.__headf, self.__headb, pwm=False)
+        self.tail_motor = Motor(self.__tailf, self.__tailb, pwm=False)
+        self.mouth_motor = Motor(self.__mouthf, self.__mouthb, pwm=False)
 
     def move_head_out(self):
         self.head_active = True
-        self.__head_motor.forward()
+        self.head_motor.forward()
         sleep(0.25)
-        self.__head_motor.stop()
 
     def move_head_in(self):
         self.head_active = False
-        self.__head_motor.backward()
+        self.head_motor.backward()
         sleep(0.25)
-        self.__head_motor.stop()
 
     def move_tail_out(self):
         self.tail_active = True
-        self.__tail_motor.forward()
+        self.tail_motor.forward()
         sleep(0.25)
-        self.__tail_motor.stop()
 
     def move_tail_in(self):
         self.tail_active = False
-        self.__tail_motor.backward()
+        self.tail_motor.backward()
         sleep(0.25)
-        self.__tail_motor.stop()
 
     def move_mouth_out(self):
         self.mouth_active = True
-        self.__mouth_motor.forward()
+        self.mouth_motor.forward()
         sleep(0.25)
-        self.__mouth_motor.stop()
 
     def move_mouth_in(self):
         self.mouth_active = False
-        self.__mouth_motor.backward()
+        self.mouth_motor.backward()
         sleep(0.25)
-        self.__mouth_motor.stop()
