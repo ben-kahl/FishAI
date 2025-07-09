@@ -23,9 +23,9 @@ def cleanup_fish():
     # This function will be called when the application exits
     print("Cleaning up GPIO pins...")
     if fish_instance:
-        fish_instance.__head_motor.close()
-        fish_instance.__tail_motor.close()
-        fish_instance.__mouth_motor.close()
+        fish_instance.head_motor.close()
+        fish_instance.tail_motor.close()
+        fish_instance.mouth_motor.close()
         print("GPIO pins released.")
 
 
@@ -69,10 +69,10 @@ def ask_gemini():
         return 'No text input into form', 400
 
     gemini_res = gemini_handler.gemini_request(user_text)
+    print(gemini_res.text)
 
-    my_voice_id = ''
     try:
-        voice_output.generate_speech(gemini_res, voice_id=my_voice_id)
+        voice_output.generate_speech(gemini_res)
         return 'Success', 200
     except Exception as e:
         print(f'Error generating speech: {e}')
