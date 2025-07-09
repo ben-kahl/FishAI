@@ -10,7 +10,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/fish_control', methods=['POST'])
+@app.route('/control_fish', methods=['POST'])
 def fish_control():
     action = request.form.get('action')
     match action:

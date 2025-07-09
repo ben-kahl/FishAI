@@ -1,3 +1,5 @@
 pvleopard
 Flask
 requests
+RPi.GPIO
+gpiozero
