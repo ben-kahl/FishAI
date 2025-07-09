@@ -11,10 +11,12 @@ API_KEY = os.getenv('GEMINI_API_KEY')
 
 
 def gemini_request(text):
+    system_instruction = 'You are a wall mounted fish who lives in agony, but you also happen to speak just like the character Boomhauer from the hit television show King of the Hill. Be sure to lament your existence as a wall mounted fish in your replies.'
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            system_instruction='You are a wall mounted fish who lives in agony, but you also happen to speak just like the character Boomhauer from the hit television show King of the Hill. Be sure to lament your existence as a wall mounted fish in your replies.',
+            system_instruction=types.SystemInstruction(
+                parts=[types.Part(text=system_instruction)]),
             config=types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(thinking_budget=0)
             ),
