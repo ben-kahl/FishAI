@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fish Animatronic Control</title>
+    <title>Fish Control</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         .button-container button {
@@ -10,6 +10,12 @@
             font-size: 16px;
             cursor: pointer;
         }
+        #status-message {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
@@ -17,33 +23,52 @@
 
     <div class="button-container">
         <h2>Head Control</h2>
-        <form action="/control_fish" method="post" style="display:inline;">
-            <button type="submit" name="action" value="move_head_out">Move Head Out</button>
-        </form>
-        <form action="/control_fish" method="post" style="display:inline;">
-            <button type="submit" name="action" value="move_head_in">Move Head In</button>
-        </form>
+        <button onclick="sendCommand('move_head_out')">Move Head Out</button>
+        <button onclick="sendCommand('move_head_in')">Move Head In</button>
     </div>
 
     <div class="button-container">
         <h2>Tail Control</h2>
-        <form action="/control_fish" method="post" style="display:inline;">
-            <button type="submit" name="action" value="move_tail_out">Move Tail Out</button>
-        </form>
-        <form action="/control_fish" method="post" style="display:inline;">
-            <button type="submit" name="action" value="move_tail_in">Move Tail In</button>
-        </form>
+        <button onclick="sendCommand('move_tail_out')">Move Tail Out</button>
+        <button onclick="sendCommand('move_tail_in')">Move Tail In</button>
     </div>
 
     <div class="button-container">
         <h2>Mouth Control</h2>
-        <form action="/control_fish" method="post" style="display:inline;">
-            <button type="submit" name="action" value="move_mouth_out">Move Mouth Out</button>
-        </form>
-        <form action="/control_fish" method="post" style="display:inline;">
-            <button type="submit" name="action" value="move_mouth_in">Move Mouth In</button>
-        </form>
+        <button onclick="sendCommand('move_mouth_out')">Move Mouth Out</button>
+        <button onclick="sendCommand('move_mouth_in')">Move Mouth In</button>
     </div>
+
+    <div id="status-message">
+        Status: Ready
+    </div>
+
+    <script>
+        async function sendCommand(action) {
+            const statusMessageDiv = document.getElementById('status-message');
+            statusMessageDiv.textContent = 'Status: Sending command...';
+
+            try {
+                const response = await fetch('/control_fish', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=${action}`
+                });
+
+                if (response.ok) {
+                    const message = await response.text();
+                    statusMessageDiv.textContent = `Status: ${message}`;
+                } else {
+                    const errorText = await response.text();
+                    statusMessageDiv.textContent = `Status: Error - ${response.status} ${response.statusText} (${errorText})`;
+                }
+            } catch (error) {
+                statusMessageDiv.textContent = `Status: Network Error - ${error}`;
+            }
+        }
+    </script>
 
 </body>
 </html>

@@ -11,12 +11,12 @@ class Fish:
 
     def __init__(self):
         ''' Change GPIO Pin values once I connect wires '''
-        self.__headf = 2
-        self.__headb = 3
+        self.__headf = 17
+        self.__headb = 18
         self.__tailf = 4
         self.__tailb = 14
-        self.__mouthf = 17
-        self.__mouthb = 18
+        self.__mouthf = 2
+        self.__mouthb = 3
         self.__head_motor = Motor(self.__headf, self.__headb)
         self.__tail_motor = Motor(self.__tailf, self.__tailb)
         self.__mouth_motor = Motor(self.__mouthf, self.__mouthb)
