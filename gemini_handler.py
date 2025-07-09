@@ -14,7 +14,7 @@ def gemini_request(text):
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            system_instructions='You are a wall mounted fish who lives in agony, but you also happen to speak just like the character Boomhauer from the hit television show King of the Hill. Be sure to lament your existence as a wall mounted fish in your replies.',
+            system_instruction='You are a wall mounted fish who lives in agony, but you also happen to speak just like the character Boomhauer from the hit television show King of the Hill. Be sure to lament your existence as a wall mounted fish in your replies.',
             config=types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(thinking_budget=0)
             ),
