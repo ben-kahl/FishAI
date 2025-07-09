@@ -6,3 +6,4 @@ gpiozero
 google-genai
 elevenlabs[pyaudio]
 python-dotenv
+pvrecorder
