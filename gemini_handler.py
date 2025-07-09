@@ -15,9 +15,8 @@ def gemini_request(text):
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            system_instruction=types.SystemInstruction(
-                parts=[types.Part(text=system_instruction)]),
             config=types.GenerateContentConfig(
+                system_instruction=system_instruction,
                 thinking_config=types.ThinkingConfig(thinking_budget=0)
             ),
             contents=text)
