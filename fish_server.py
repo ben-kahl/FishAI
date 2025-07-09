@@ -69,8 +69,7 @@ def ask_gemini():
         return 'No text input into form', 400
 
     gemini_res = gemini_handler.gemini_request(user_text)
-    print(gemini_res.text)
-
+    print(gemini_res)
     try:
         voice_output.generate_speech(gemini_res)
         return 'Success', 200

@@ -25,5 +25,3 @@ def gemini_request(text):
             return "Dang ol' no response, man. Just stuck here, you know, talkin' to myself."
     except Exception as e:
         return "Man, I'll tell you what, that ol' API done messed up, talkin' 'bout no response, dang ol' error."
-
-    return response.text
