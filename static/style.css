@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+  background-color: #262626;
+  color: white;
+}
+
+.control-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.button-container button,
+.control-button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: lightslategrey;
+  border-color: black;
+  border-radius: 3px;
+  color: black;
+  display: flex;
+  flex-flow: wrap row;
+}
+
+#status-message {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  min-height: 50px;
+  color: black;
+  /* Give it some height */
+}
+
+textarea {
+  width: 80%;
+  height: 80px;
+  margin-top: 10px;
+  padding: 5px;
+  font-size: 14px;
+  border-color: black;
+}
