@@ -77,5 +77,17 @@ def ask_gemini():
         print(f'Error generating speech: {e}')
 
 
+@app.route('/test_elevenlabs', methods=['POST'])
+def test_elevenlabs():
+    user_text = request.form.get('user_text')
+    if not user_text:
+        return 'No text recieved', 400
+    try:
+        voice_output.generate_speech(user_text)
+        return 'Success', 200
+    except Exception as e:
+        print(f'Error generating speech: {e}')
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

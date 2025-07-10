@@ -1,122 +1,48 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Fish Animatronic Control</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .button-container button, .control-button {
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #status-message {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            min-height: 50px; /* Give it some height */
-        }
-        textarea {
-            width: 80%;
-            height: 80px;
-            margin-top: 10px;
-            padding: 5px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
+  <head>
+    <title>Fish Control</title>
+    <link rel='stylesheet' href='style.css'>
+  </head>
+  <body>
     <h1>Control The Fish</h1>
 
-    <div class="button-container">
+    <div class="control-container">
+      <div class="button-container">
         <h2>Head Control</h2>
         <button onclick="sendFishCommand('move_head_out')">Move Head Out</button>
         <button onclick="sendFishCommand('move_head_in')">Move Head In</button>
-    </div>
+      </div>
 
-    <div class="button-container">
+      <div class="button-container">
         <h2>Tail Control</h2>
         <button onclick="sendFishCommand('move_tail_out')">Move Tail Out</button>
         <button onclick="sendFishCommand('move_tail_in')">Move Tail In</button>
-    </div>
+      </div>
 
-    <div class="button-container">
+      <div class="button-container">
         <h2>Mouth Control</h2>
         <button onclick="sendFishCommand('move_mouth_out')">Move Mouth Out</button>
         <button onclick="sendFishCommand('move_mouth_in')">Move Mouth In</button>
+      </div>
     </div>
 
     <hr> <h2>Speak to Gemini</h2>
     <div>
-        <textarea id="gemini-input" placeholder="Type your message for Gemini here..."></textarea><br>
-        <button class="control-button" onclick="sendGeminiCommand()">Ask Gemini</button>
+      <textarea id="gemini-input" placeholder="Type your message for Gemini here..."></textarea><br>
+      <button class="control-button" onclick="sendGeminiCommand()">Ask Gemini</button>
+    </div>
+
+    <hr> <h2>Test ElevenLabs</h2>
+    <div>
+      <textarea id='elevenlabs-input' placeholder='Type your message for Elevenlabs here...'></textarea><br>
+      <button class='control-button' onclick='sendElevenLabsCommand()'>Test ElevenLabs</button>
     </div>
 
     <div id="status-message">
-        Status: Ready
+      Status: Ready
     </div>
 
-    <script>
-        async function sendFishCommand(action) {
-            const statusMessageDiv = document.getElementById('status-message');
-            statusMessageDiv.textContent = 'Status: Sending fish command...';
-
-            try {
-                const response = await fetch('/control_fish', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=${action}`
-                });
-
-                if (response.ok) {
-                    const message = await response.text();
-                    statusMessageDiv.textContent = `Status: ${message}`;
-                } else {
-                    const errorText = await response.text();
-                    statusMessageDiv.textContent = `Status: Error - ${response.status} ${response.statusText} (${errorText})`;
-                }
-            } catch (error) {
-                statusMessageDiv.textContent = `Status: Network Error - ${error}`;
-            }
-        }
-
-        async function sendGeminiCommand() {
-            const statusMessageDiv = document.getElementById('status-message');
-            const geminiInput = document.getElementById('gemini-input');
-            const userText = geminiInput.value;
-
-            if (!userText.trim()) {
-                statusMessageDiv.textContent = 'Status: Please enter some text for Gemini.';
-                return;
-            }
-
-            statusMessageDiv.textContent = 'Status: Sending text to Gemini...';
-
-            try {
-                const response = await fetch('/ask_gemini', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `user_text=${encodeURIComponent(userText)}` // Encode the text for URL safety
-                });
-
-                if (response.ok) {
-                    const message = await response.text();
-                    statusMessageDiv.textContent = `Status: ${message}`;
-                    geminiInput.value = ''; // Clear the textbox
-                } else {
-                    const errorText = await response.text();
-                    statusMessageDiv.textContent = `Status: Error - ${response.status} ${response.statusText} (${errorText})`;
-                }
-            } catch (error) {
-                statusMessageDiv.textContent = `Status: Network Error - ${error}`;
-            }
-        }
-    </script>
-
+    <script src="./script.js"/>
 </body>
 </html>
