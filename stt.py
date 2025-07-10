@@ -4,6 +4,7 @@ import pvleopard
 from pvrecorder import PvRecorder
 import wave
 import struct
+import time
 
 
 load_dotenv()
@@ -21,9 +22,11 @@ def list_inputs():
 
 def get_audio_data():
     audio = []
+    start = time.time()
+    duration = 5
     try:
         recorder.start()
-        while True:
+        while time.time() - start < duration:
             frame = recorder.read()
             audio.extend(frame)
         recorder.stop()
@@ -36,10 +39,11 @@ def get_audio_data():
 
 
 def speech_to_text():
-    # input = get_audio_data()
+    input = get_audio_data()
     if input:
         transcript, words = leopard.process(input)
         print(transcript)
 
 
 list_inputs()
+speech_to_text()
