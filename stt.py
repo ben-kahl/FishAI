@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 import pvleopard
-from pvrecorder import PVRecorder
+from pvrecorder import PvRecorder
 import wave
 import struct
 
@@ -11,11 +11,11 @@ load_dotenv()
 API_KEY = os.getenv('PICOVOICE_API_KEY')
 
 leopard = pvleopard.create(access_key=API_KEY)
-recorder = PVRecorder(device_index=-1, frame_length=512)
+recorder = PvRecorder(device_index=-1, frame_length=512)
 
 
 def list_inputs():
-    for index, device in enumerate(PVRecorder.get_audio_devices()):
+    for index, device in enumerate(PvRecorder.get_available_devices()):
         print(f'[{index}] {device}')
 
 
@@ -36,7 +36,7 @@ def get_audio_data():
 
 
 def speech_to_text():
-    input = get_audio_data()
+    # input = get_audio_data()
     if input:
         transcript, words = leopard.process(input)
         print(transcript)
