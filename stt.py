@@ -45,5 +45,8 @@ def speech_to_text():
         print(transcript)
 
 
-list_inputs()
-speech_to_text()
+if __name__ == "__main__":
+    print('listing inputs...')
+    list_inputs()
+    print('recording and transcribing')
+    speech_to_text()
