@@ -61,3 +61,16 @@ class Fish:
         self.mouth_motor.backward()
         sleep(0.25)
         self.mouth_motor.stop()
+
+
+if __name__ == '__main__':
+    fish = Fish()
+    fish.move_head_out()
+    print('moving head')
+    sleep(1)
+    fish.move_tail_out()
+    print('moving tail')
+    sleep(1)
+    fish.move_head_out()
+    print('moving head')
+    sleep(1)
