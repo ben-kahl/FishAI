@@ -26,17 +26,20 @@ def run_pipeline():
         print('Picovoice pipeline running')
 
         while True:
+            recorder.start()
             keyword_index = porcupine.process(recorder.read())
             if keyword_index >= 0:
                 print('Wake word detected')
-                time.sleep(1)
+                recorder.stop()
 
                 audio_frames = []
                 start_time = time.time()
+                recorder.start()
                 while time.time() - start_time < 5:
                     audio_frames.extend(recorder.read())
 
                 transcript, _ = leopard.process(audio_frames)
+                recorder.stop()
                 print(f'pico transcription: {transcript}')
 
                 if transcript:
