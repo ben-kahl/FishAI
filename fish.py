@@ -22,32 +22,42 @@ class Fish:
         self.tail_motor = Motor(self.__tailf, self.__tailb, pwm=False)
         self.mouth_motor = Motor(self.__mouthf, self.__mouthb, pwm=False)
 
+        self.head_motor.stop()
+        self.tail_motor.stop()
+        self.mouth_motor.stop()
+
     def move_head_out(self):
         self.head_active = True
         self.head_motor.forward()
         sleep(0.25)
+        self.head_motor.stop()
 
     def move_head_in(self):
         self.head_active = False
         self.head_motor.backward()
         sleep(0.25)
+        self.head_motor.stop()
 
     def move_tail_out(self):
         self.tail_active = True
         self.tail_motor.forward()
         sleep(0.25)
+        self.tail_motor.stop()
 
     def move_tail_in(self):
         self.tail_active = False
         self.tail_motor.backward()
         sleep(0.25)
+        self.tail_motor.stop()
 
     def move_mouth_out(self):
         self.mouth_active = True
         self.mouth_motor.forward()
         sleep(0.25)
+        self.mouth_motor.stop()
 
     def move_mouth_in(self):
         self.mouth_active = False
         self.mouth_motor.backward()
         sleep(0.25)
+        self.mouth_motor.stop()
