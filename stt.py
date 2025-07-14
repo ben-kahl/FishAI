@@ -30,9 +30,9 @@ def get_audio_data():
             frame = recorder.read()
             audio.extend(frame)
         recorder.stop()
-        with wave.open('/user_input.wav', 'w') as f:
-            f.setparams((1, 2, 16000, 512, 'NONE', 'NONE'))
-            f.writeframes(struct.pack('h', * len(audio), *audio))
+        # with wave.open('/user_input.wav', 'w') as f:
+        #   f.setparams((1, 2, 16000, 512, 'NONE', 'NONE'))
+        #  f.writeframes(struct.pack('h', * len(audio), *audio))
         return audio
     finally:
         recorder.delete()
