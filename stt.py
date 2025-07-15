@@ -22,7 +22,7 @@ def run_pipeline():
         leopard = pvleopard.create(access_key=API_KEY)
         recorder = PvRecorder(device_index=-1, frame_length=512)
         porcupine = pvporcupine.create(
-            access_key=API_KEY, keyword_paths=['${KEYWORD_PATH'])
+            access_key=API_KEY, keyword_paths=['${KEYWORD_PATH}'])
 
         print('Picovoice pipeline running')
 
