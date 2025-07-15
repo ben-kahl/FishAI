@@ -11,6 +11,7 @@ import voice_output
 load_dotenv()
 
 API_KEY = os.getenv('PICOVOICE_API_KEY')
+KEYWORD_PATH = "./wake_word.ppn"
 
 
 def run_pipeline():
@@ -20,8 +21,7 @@ def run_pipeline():
     try:
         leopard = pvleopard.create(access_key=API_KEY)
         recorder = PvRecorder(device_index=-1, frame_length=512)
-        # change keyword to custom model once it's created
-        porcupine = pvporcupine.create(API_KEY, keywords=['bumblebee'])
+        porcupine = pvporcupine.create(API_KEY, keywords=['${KEYWORD_PATH'])
 
         print('Picovoice pipeline running')
 
