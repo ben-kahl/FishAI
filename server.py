@@ -16,17 +16,7 @@ def initialize_fish():
     if fish_instance is None:
         fish_instance = Fish()
         # Register the cleanup function to be called on app exit
-        atexit.register(cleanup_fish)
-
-
-def cleanup_fish():
-    # This function will be called when the application exits
-    print("Cleaning up GPIO pins...")
-    if fish_instance:
-        fish_instance.head_motor.close()
-        fish_instance.tail_motor.close()
-        fish_instance.mouth_motor.close()
-        print("GPIO pins released.")
+        atexit.register(fish_instance.cleanup_fish)
 
 
 @app.route('/')

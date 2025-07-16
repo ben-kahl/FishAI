@@ -1,63 +1,60 @@
 ''' Motor Driver Code for Big Mouth Billy Bass Hardware '''
 
-from gpiozero import Motor
+from gpiozero import Motor, Button
 from time import sleep
 
 
 class Fish:
-    head_active = False
-    tail_active = False
-    mouth_active = False
+    head_motor = None
+    tail_motor = None
+    mouth_motor = None
+    button = None
 
     def __init__(self):
-        ''' Change GPIO Pin values once I connect wires '''
-        self.__headf = 17
-        self.__headb = 18
-        self.__tailf = 4
-        self.__tailb = 14
-        self.__mouthf = 2
-        self.__mouthb = 3
-        # Make these accessible for cleanup by removing the double underscore
-        self.head_motor = Motor(self.__headf, self.__headb, pwm=False)
-        self.tail_motor = Motor(self.__tailf, self.__tailb, pwm=False)
-        self.mouth_motor = Motor(self.__mouthf, self.__mouthb, pwm=False)
+        # Consider pwm pins for head and mouth
+        try:
+            self.head_motor = Motor(forward=4, backward=14, pwm=False)
+            self.tail_motor = Motor(forward=17, backward=18, pwm=False)
+            self.mouth_motor = Motor(forward=2, backward=3, pwm=False)
+            # self.button = Button(32)
+            print('Motors and buttons initialized')
+        except Exception as e:
+            print(f'Error configuring motors: {e}')
 
-        self.head_motor.stop()
-        self.tail_motor.stop()
-        self.mouth_motor.stop()
+    def cleanup_fish(self):
+        # This function will be called when the application exits
+        print("Cleaning up GPIO pins...")
+        self.head_motor.close()
+        self.tail_motor.close()
+        self.mouth_motor.close()
+        print("GPIO pins released.")
 
     def move_head_out(self):
-        self.head_active = True
         self.head_motor.forward()
         sleep(0.25)
         self.head_motor.stop()
 
     def move_head_in(self):
-        self.head_active = False
         self.head_motor.backward()
         sleep(0.25)
         self.head_motor.stop()
 
     def move_tail_out(self):
-        self.tail_active = True
         self.tail_motor.forward()
         sleep(0.25)
         self.tail_motor.stop()
 
     def move_tail_in(self):
-        self.tail_active = False
         self.tail_motor.backward()
         sleep(0.25)
         self.tail_motor.stop()
 
     def move_mouth_out(self):
-        self.mouth_active = True
         self.mouth_motor.forward()
         sleep(0.25)
         self.mouth_motor.stop()
 
     def move_mouth_in(self):
-        self.mouth_active = False
         self.mouth_motor.backward()
         sleep(0.25)
         self.mouth_motor.stop()
@@ -65,12 +62,18 @@ class Fish:
 
 if __name__ == '__main__':
     fish = Fish()
-    fish.move_head_out()
-    print('moving head')
-    sleep(1)
-    fish.move_tail_out()
-    print('moving tail')
-    sleep(1)
-    fish.move_head_out()
-    print('moving head')
-    sleep(1)
+    while True:
+        user_in = input(
+            'Input a fish command (1 for mouth, 2 for head, 3 for tail)'
+        )
+        match user_in:
+            case 1:
+                fish.move_mouth_out()
+            case 2:
+                fish.move_head_out()
+            case 3:
+                fish.move_tail_out()
+            case 4:
+                fish.cleanup_fish()
+            case _:
+                print('invalid input')
