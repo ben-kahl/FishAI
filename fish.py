@@ -66,7 +66,7 @@ if __name__ == '__main__':
         user_in = input(
             'Input a fish command (1 for mouth, 2 for head, 3 for tail)'
         )
-        match user_in:
+        match user_in.strip():
             case 1:
                 fish.move_mouth_out()
             case 2:
