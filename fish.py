@@ -12,6 +12,7 @@ class Fish:
 
     def __init__(self):
         # Consider pwm pins for head and mouth
+        # note: ill need a usb mic since i2s mic uses pwm pins
         try:
             self.head_motor = Motor(forward=17, backward=27, pwm=False)
             self.tail_motor = Motor(forward=14, backward=4, pwm=False)
@@ -28,6 +29,13 @@ class Fish:
         self.tail_motor.close()
         self.mouth_motor.close()
         print("GPIO pins released.")
+
+    def talk(self, audio_chunk, chunk_dur):
+        self.mouth_motor.forward()
+        sleep(chunk_dur/0.75)
+        self.mouth_motor.backward()
+        sleep(chunk_dur/0.25)
+        self.mouth_motor.stop()
 
     def move_head_out(self):
         self.head_motor.forward()
