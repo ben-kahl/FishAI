@@ -8,12 +8,15 @@ load_dotenv()
 
 API_KEY = os.getenv('ELEVENLABS_API_KEY')
 
+hank = '6F5Zhi321D3Oq7v1oNT4'
+voice_ids = [hank]
+
 client = ElevenLabs(
     api_key=API_KEY,
 )
 
 
-def generate_speech(text, voice_id='6F5Zhi321D3Oq7v1oNT4'):
+def generate_speech(text, voice_id=voice_ids[0]):
     temp_file_path = None
     try:
         audio_stream = client.text_to_speech.convert(

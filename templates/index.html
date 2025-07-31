@@ -47,7 +47,17 @@
     Status: Ready
   </div>
 
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <div class="control-container">
+    <div class="button-container">
+      <h2>Change Fish Personality</h2>
+      <button onclick="changeFishPersonality('depressed')">Depressed</button>
+      <button onclick="changeFishPersonality('sassy')">Sassy</button>
+      <button onclick="changeFishPersonality('normal')">Normal</button>
+      <button onclick="changeFishPersonality('strange')">Strange</button>
+      <button onclick="changeFishPersonality('excited')">Excited</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>

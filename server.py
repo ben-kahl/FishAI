@@ -79,5 +79,26 @@ def test_elevenlabs():
         print(f'Error generating speech: {e}')
 
 
+@app.route('/update_personality', methods=['POST'])
+def update_personality():
+    action = request.form.get('action')
+    match action:
+        case 'depressed':
+            gemini_handler.selected_personality = 0
+            return "Personality changed to depressed"
+        case 'sassy':
+            gemini_handler.selected_personality = 1
+            return "Personality changed to sassy"
+        case 'normal':
+            gemini_handler.selected_personality = 2
+            return "Personality changed to normal"
+        case 'strange':
+            gemini_handler.selected_personality = 3
+            return "Personality changed to strange"
+        case 'excited':
+            gemini_handler.selected_personality = 4
+            return "Personality changed to excited"
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

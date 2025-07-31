@@ -91,3 +91,28 @@ async function sendElevenLabsCommand() {
     statusMessageDiv.textContent = `Status: Network Error - ${error}`;
   }
 }
+
+async function changeFishPersonality(action) {
+  const statusMessageDiv = document.getElementById('status-message');
+  statusMessageDiv.textContent = 'Status: Changing fish personality';
+
+  try {
+    const response = await fetch('/update_personality', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `action=${action}`
+    });
+
+    if (response.ok) {
+      const message = await response.text();
+      statusMessageDiv.textContent = `Status: ${message}`;
+    } else {
+      const errorText = await response.text();
+      statusMessageDiv.textContent = `Status: Error - ${response.status} ${response.statusText} (${errorText})`;
+    }
+  } catch (error) {
+    statusMessageDiv.textContent = `Status: Network Error - ${error}`;
+  }
+}
