@@ -14,7 +14,7 @@ class Fish:
         # Consider pwm pins for head and mouth
         try:
             self.head_motor = Motor(forward=17, backward=27, pwm=False)
-            self.tail_motor = Motor(forward=4, backward=14, pwm=False)
+            self.tail_motor = Motor(forward=14, backward=4, pwm=False)
             self.mouth_motor = Motor(forward=2, backward=3, pwm=False)
             # self.button = Button(32)
             print('Motors and buttons initialized')
@@ -75,5 +75,6 @@ if __name__ == '__main__':
                 fish.move_tail_out()
             case 4:
                 fish.cleanup_fish()
+                break
             case _:
                 print('invalid input')
