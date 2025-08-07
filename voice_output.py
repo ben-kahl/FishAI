@@ -29,7 +29,6 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_audio_file:
             for chunk in audio_stream:
                 temp_audio_file.write(chunk)
-                print(dir(chunk))
             temp_file_path = temp_audio_file.name
 
         print(f'Audio saved to: {temp_file_path}')

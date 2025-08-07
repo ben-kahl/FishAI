@@ -30,6 +30,12 @@ class Fish:
         self.mouth_motor.close()
         print("GPIO pins released.")
 
+    def listen(self, duration):
+        print("listening")
+        self.head_motor.forward()
+        sleep(3)
+        self.head_motor.stop()
+
     def talk(self, audio_stream=None):
         audio_stream = None
         if audio_stream:
