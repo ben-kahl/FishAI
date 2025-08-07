@@ -31,7 +31,7 @@ personality_state = PersonalityState()
 
 
 def gemini_request(text):
-    system_instruction = personalities[personality_state.selected_personality]
+    system_instruction = depressed
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
