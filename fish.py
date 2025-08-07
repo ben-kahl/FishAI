@@ -33,7 +33,7 @@ class Fish:
     def listen(self, duration):
         print("listening")
         self.head_motor.forward()
-        sleep(3)
+        sleep(1)
         self.head_motor.stop()
 
     def talk(self, audio_stream=None):
