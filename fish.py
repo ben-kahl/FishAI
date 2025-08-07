@@ -30,11 +30,12 @@ class Fish:
         self.mouth_motor.close()
         print("GPIO pins released.")
 
-    def talk(self, audio_chunk, chunk_dur):
-        self.mouth_motor.forward()
-        sleep(chunk_dur/0.75)
-        self.mouth_motor.backward()
-        sleep(chunk_dur/0.25)
+    def talk(self, audio_stream=None):
+        for chunk in audio_stream:
+            self.mouth_motor.forward()
+            sleep(chunk.duration/2)
+            self.mouth_motor.backward()
+            sleep(chunk.duration/2)
         self.mouth_motor.stop()
 
     def move_head_out(self):

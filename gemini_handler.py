@@ -21,11 +21,17 @@ excited = 'You are an animatronic fish mounted to a wooden plaque. You are unbel
 
 personalities = [depressed, sassy, normal, strange, excited]
 
-selected_personality = 0
+
+class PersonalityState:
+    def __init__(self):
+        self.selected_personality = 0
+
+
+personality_state = PersonalityState()
 
 
 def gemini_request(text):
-    system_instruction = personalities[selected_personality]
+    system_instruction = personalities[personality_state]
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',

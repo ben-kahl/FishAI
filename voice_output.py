@@ -16,7 +16,7 @@ client = ElevenLabs(
 )
 
 
-def generate_speech(text, voice_id=voice_ids[0]):
+def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
     temp_file_path = None
     try:
         audio_stream = client.text_to_speech.convert(
@@ -29,12 +29,16 @@ def generate_speech(text, voice_id=voice_ids[0]):
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_audio_file:
             for chunk in audio_stream:
                 temp_audio_file.write(chunk)
+                dir(chunk)
+                vars(chunk)
             temp_file_path = temp_audio_file.name
 
         print(f'Audio saved to: {temp_file_path}')
 
         try:
             subprocess.run(['mpg123', '-q', temp_file_path], check=True)
+            if fish_instance:
+                fish_instance.talk(audio_stream)
         except FileNotFoundError:
             print('Error: mpg123 not found')
         except subprocess.CalledProcessError as e:
