@@ -1,7 +1,7 @@
 ''' Motor Driver Code for Big Mouth Billy Bass Hardware '''
 
 from gpiozero import Motor, Button
-from time import sleep
+from time import sleep, time
 
 
 class Fish:
@@ -37,13 +37,12 @@ class Fish:
         self.head_motor.stop()
 
     def talk(self, audio_stream=None):
-        audio_stream = None
-        if audio_stream:
-            for chunk in audio_stream:
-                self.mouth_motor.forward()
-                sleep(chunk.duration/2)
-                self.mouth_motor.backward()
-                sleep(chunk.duration/2)
+        start_time = time.time()
+        while time.time() - start_time < 3:
+            self.mouth_motor.forward()
+            sleep(.3)
+            self.mouth_motor.backward()
+            sleep(.3)
         self.mouth_motor.stop()
 
     def move_head_out(self):
