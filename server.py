@@ -37,7 +37,7 @@ def control_fish():
         fish_instance.instance.move_tail_in()
         return "Tail moved in!"
     elif action == 'move_mouth_out':
-        fish_instance.instance.talk(1)
+        fish_instance.instance.move_mouth_out()
         return "Mouth moved out!"
     elif action == 'move_mouth_in':
         fish_instance.instance.move_mouth_in()
