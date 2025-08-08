@@ -6,6 +6,7 @@ import pvporcupine
 import time
 import gemini_handler
 import voice_output
+import threading
 
 
 load_dotenv()
@@ -37,11 +38,16 @@ def run_pipeline(fish_instance):
                 audio_frames = []
                 recorder.start()
                 if fish_instance:
-                    fish_instance.listen(3)
+                    listen_thread = threading.Thread(
+                        fish_instance.listen, args=(3,))
+                    listen_thread.start()
+
                 start_time = time.time()
                 while time.time() - start_time < 3:
                     audio_frames.extend(recorder.read())
 
+                if fish_instance:
+                    listen_thread.join()
                 transcript, _ = leopard.process(audio_frames)
                 recorder.stop()
                 print(f'pico transcription: {transcript}')

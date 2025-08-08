@@ -8,3 +8,4 @@ elevenlabs[pyaudio]
 python-dotenv
 pvrecorder
 pvporcupine
+mutagen

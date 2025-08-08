@@ -38,9 +38,9 @@ class Fish:
         sleep(duration*.25)
         self.head_motor.stop()
 
-    def talk(self, audio_stream=None):
+    def talk(self, duration):
         start_time = time.time()
-        while time.time() - start_time < 5:
+        while time.time() - start_time < duration:
             self.head_motor.forward(speed=0.4)
             self.mouth_motor.forward(speed=1)
             sleep(.5)

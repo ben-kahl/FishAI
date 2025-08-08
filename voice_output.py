@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 import subprocess
 from elevenlabs import ElevenLabs
+import threading
+from mutagen.mp3 import MP3
 
 load_dotenv()
 
@@ -34,9 +36,15 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
         print(f'Audio saved to: {temp_file_path}')
 
         try:
+            audio = MP3(temp_file_path)
+            audio_duration = audio.info.length
             if fish_instance:
-                fish_instance.talk(audio_stream)
+                animation_thread = threading.Thread(
+                    target=fish_instance.talk, args=(audio_duration,))
+                animation_thread.start()
             subprocess.run(['mpg123', '-q', temp_file_path], check=True)
+            if fish_instance:
+                animation_thread.join()
         except FileNotFoundError:
             print('Error: mpg123 not found')
         except subprocess.CalledProcessError as e:
