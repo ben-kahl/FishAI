@@ -41,10 +41,13 @@ class Fish:
     def talk(self, audio_stream=None):
         start_time = time.time()
         while time.time() - start_time < 5:
+            self.head_motor.forward(speed=0.4)
             self.mouth_motor.forward(speed=1)
-            sleep(.8)
+            sleep(.5)
             self.mouth_motor.backward(speed=1)
             sleep(.3)
+        self.head_motor.backward(speed=0.4)
+        self.head_motor.stop()
         self.mouth_motor.stop()
 
     def move_head_out(self):
