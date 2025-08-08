@@ -53,15 +53,18 @@ class Fish:
             curr_time = time.time() - start_time
             if next_character_time is not None and curr_time >= next_character_time:
                 if curr_time - last_animation_time > talk_threshhold:
+                    print(f'syncing character, next character time:{
+                          next_character_time}')
                     self.mouth_motor.forward(speed=1)
-                    sleep(.3)
+                    sleep(.2)
                     self.mouth_motor.backward(speed=1)
                     sleep(.1)
                     self.mouth_motor.stop()
                     last_animation_time = curr_time
                 next_word_time = next(timestamp_iter, None)
             else:
-                self.head_motor.forward(speed=0.2)
+                print('moving head')
+                self.head_motor.forward(speed=0.5)
                 sleep(0.1)
                 self.head_motor.stop()
 
