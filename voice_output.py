@@ -29,7 +29,7 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
         )
 
         audio_stream = response.audio_base_64
-        timestamps = response.alignment.characters_start_times_seconds
+        timestamps = response.alignment.character_start_times_seconds
 
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_audio_file:
             temp_audio_file.write(audio_stream)
