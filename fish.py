@@ -50,9 +50,14 @@ class Fish:
         talk_threshhold = 0.4
         last_animation_time = -1
         last_head_movement = -1
+        head_threshold = 1
         while time.time() - start_time < end_time:
             curr_time = time.time() - start_time
             if next_character_time is not None and curr_time >= next_character_time:
+                if curr_time - last_head_movement > head_threshold:
+                    self.head_motor.forward(speed=0.4)
+                else:
+                    self.head_motor.stop()
                 if curr_time - last_animation_time > talk_threshhold:
                     self.mouth_motor.forward(speed=1)
                     sleep(.2)
