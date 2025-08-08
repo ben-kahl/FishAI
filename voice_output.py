@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import subprocess
 from elevenlabs import ElevenLabs
 import threading
+import fish
 
 load_dotenv()
 
@@ -26,6 +27,8 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
             text=text,
             model_id='eleven_flash_v2_5'
         )
+
+        print(dir(response))
 
         audio_stream = response.audio_base64
         timestamps = response.alignment.characters_start_times_seconds
@@ -55,3 +58,8 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
     finally:
         if temp_file_path and os.path.exists(temp_file_path):
             os.remove(temp_file_path)
+
+
+if __name__ == '__main__':
+    fish_instance = fish.Fish()
+    generate_speech('hello', fish_instance)
