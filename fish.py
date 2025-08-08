@@ -33,12 +33,12 @@ class Fish:
     def listen(self, duration):
         print("listening")
         self.head_motor.forward()
-        sleep(1)
+        sleep(duration)
         self.head_motor.stop()
 
     def talk(self, audio_stream=None):
         start_time = time.time()
-        while time.time() - start_time < 3:
+        while time.time() - start_time < 5:
             self.mouth_motor.forward()
             sleep(.3)
             self.mouth_motor.backward()
