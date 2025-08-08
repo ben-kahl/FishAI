@@ -84,7 +84,7 @@ if __name__ == '__main__':
     fish = Fish()
     while True:
         user_in = input(
-            'Input a fish command (1 for mouth, 2 for head, 3 for tail)'
+            'Input a fish command (1 for mouth, 2 for head, 3 for tail, 4 for talk, 5 for listen, 6 to exit)'
         )
         match int(user_in.strip()):
             case 1:
@@ -94,6 +94,10 @@ if __name__ == '__main__':
             case 3:
                 fish.move_tail_out()
             case 4:
+                fish.talk()
+            case 5:
+                fish.listen(3)
+            case 6:
                 fish.cleanup_fish()
                 break
             case _:
