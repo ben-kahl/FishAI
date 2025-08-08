@@ -5,6 +5,7 @@ import subprocess
 from elevenlabs import ElevenLabs
 import threading
 import fish
+import base64
 
 load_dotenv()
 
@@ -32,7 +33,7 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
         timestamps = response.alignment.character_start_times_seconds
 
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_audio_file:
-            temp_audio_file.write(audio_stream)
+            temp_audio_file.write(base64.b64decode(audio_stream))
             temp_file_path = temp_audio_file.name
 
         print(f'Audio saved to: {temp_file_path}')
