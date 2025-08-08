@@ -56,8 +56,6 @@ class Fish:
             if next_character_time is not None and curr_time >= next_character_time:
                 if curr_time - last_head_movement > head_threshold:
                     self.head_motor.forward(speed=0.4)
-                else:
-                    self.head_motor.stop()
                 if curr_time - last_animation_time > talk_threshhold:
                     self.mouth_motor.forward(speed=1)
                     sleep(.2)
@@ -66,6 +64,7 @@ class Fish:
                     self.mouth_motor.stop()
                     last_animation_time = curr_time
                 next_character_time = next(timestamp_iter, None)
+        self.head_motor.stop()
 
     def move_head_out(self):
         self.head_motor.forward()
