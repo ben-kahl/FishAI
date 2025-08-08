@@ -32,16 +32,20 @@ class Fish:
 
     def listen(self, duration):
         print("listening")
-        self.head_motor.forward()
-        sleep(duration)
+        self.head_motor.forward(speed=0.80)
+        sleep(0.5)
+        self.head_motor.forward(speed=1)
+        sleep(0.25)
+        self.head_motor.backward(speed=0.25)
+        sleep(0.5)
         self.head_motor.stop()
 
     def talk(self, audio_stream=None):
         start_time = time.time()
         while time.time() - start_time < 5:
-            self.mouth_motor.forward()
-            sleep(.3)
-            self.mouth_motor.backward()
+            self.mouth_motor.forward(speed=0.5)
+            sleep(.8)
+            self.mouth_motor.backward(speed=1)
             sleep(.3)
         self.mouth_motor.stop()
 
