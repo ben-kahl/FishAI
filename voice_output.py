@@ -34,9 +34,9 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
         print(f'Audio saved to: {temp_file_path}')
 
         try:
-            subprocess.run(['mpg123', '-q', temp_file_path], check=True)
             if fish_instance:
                 fish_instance.talk(audio_stream)
+            subprocess.run(['mpg123', '-q', temp_file_path], check=True)
         except FileNotFoundError:
             print('Error: mpg123 not found')
         except subprocess.CalledProcessError as e:

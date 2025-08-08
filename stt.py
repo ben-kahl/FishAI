@@ -35,10 +35,10 @@ def run_pipeline(fish_instance):
                 recorder.stop()
 
                 audio_frames = []
-                start_time = time.time()
                 recorder.start()
                 if fish_instance:
-                    fish_instance.listen(.5)
+                    fish_instance.listen(3)
+                start_time = time.time()
                 while time.time() - start_time < 3:
                     audio_frames.extend(recorder.read())
 
