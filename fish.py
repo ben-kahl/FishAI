@@ -14,9 +14,9 @@ class Fish:
         # Consider pwm pins for head and mouth
         # note: ill need a usb mic since i2s mic uses pwm pins
         try:
-            self.head_motor = Motor(forward=17, backward=27, pwm=False)
-            self.tail_motor = Motor(forward=14, backward=4, pwm=False)
-            self.mouth_motor = Motor(forward=2, backward=3, pwm=False)
+            self.head_motor = Motor(forward=17, backward=27, pwm=True)
+            self.tail_motor = Motor(forward=14, backward=4, pwm=True)
+            self.mouth_motor = Motor(forward=2, backward=3, pwm=True)
             # self.button = Button(32)
             print('Motors and buttons initialized')
         except Exception as e:
