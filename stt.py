@@ -39,7 +39,7 @@ def run_pipeline(fish_instance):
                 recorder.start()
                 if fish_instance:
                     listen_thread = threading.Thread(
-                        fish_instance.listen, args=(3,))
+                        target=fish_instance.listen, args=(3,))
                     listen_thread.start()
 
                 start_time = time.time()
