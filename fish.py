@@ -45,16 +45,20 @@ class Fish:
         start_time = time.time()
         end_time = timestamps[-1] + 0.5 if timestamps else 0
         timestamp_iter = iter(timestamps)
-        next_word_time = next(timestamp_iter, None)
+        next_character_time = next(timestamp_iter, None)
 
+        talk_threshhold = 0.15
+        last_animation_time = -1
         while time.time() - start_time < end_time:
             curr_time = time.time() - start_time
-            if next_word_time is not None and curr_time >= next_word_time:
-                self.mouth_motor.forward(speed=1)
-                sleep(.2)
-                self.mouth_motor.backward(speed=1)
-                sleep(.1)
-                self.mouth_motor.stop()
+            if next_character_time is not None and curr_time >= next_character_time:
+                if curr_time - last_animation_time > talk_threshhold:
+                    self.mouth_motor.forward(speed=1)
+                    sleep(.1)
+                    self.mouth_motor.backward(speed=1)
+                    sleep(.05)
+                    self.mouth_motor.stop()
+                    last_animation_time = curr_time
                 next_word_time = next(timestamp_iter, None)
             else:
                 self.head_motor.forward(speed=0.2)

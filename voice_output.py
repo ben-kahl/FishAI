@@ -27,8 +27,8 @@ def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
             model_id='eleven_flash_v2_5'
         )
 
-        audio_stream = response['audio_base64']
-        timestamps = response['alignment']['word_start_times_seconds']
+        audio_stream = response.audio_base64
+        timestamps = response.alignment.characters_start_times_seconds
 
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_audio_file:
             temp_audio_file.write(audio_stream)
