@@ -12,8 +12,7 @@ class Fish:
     button = None
 
     def __init__(self):
-        # Consider pwm pins for head and mouth
-        # note: ill need a usb mic since i2s mic uses pwm pins
+        # Using software pwm. Not super precise but that's okay for this application
         try:
             self.head_motor = Motor(forward=17, backward=27, pwm=True)
             self.tail_motor = Motor(forward=14, backward=4, pwm=True)
@@ -34,15 +33,15 @@ class Fish:
     def listen(self, duration):
         print("listening")
         self.head_motor.forward(speed=0.40)
-        sleep(duration/2)
+        sleep(duration*.75)
         self.head_motor.backward(speed=0.25)
-        sleep(duration/2)
+        sleep(duration*.25)
         self.head_motor.stop()
 
     def talk(self, audio_stream=None):
         start_time = time.time()
         while time.time() - start_time < 5:
-            self.mouth_motor.forward(speed=0.5)
+            self.mouth_motor.forward(speed=1)
             sleep(.8)
             self.mouth_motor.backward(speed=1)
             sleep(.3)
