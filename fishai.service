@@ -1,0 +1,12 @@
+[Unit]
+Description=FishAI Service
+After=network.target sound.target
+
+[Service]
+user=[replace with your user]
+WorkingDirectory=/home/bkahl/FishAI
+ExecStart=/home/bkahl/FishAI/venv/bin/python -u /home/bkahl/FishAI/main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
