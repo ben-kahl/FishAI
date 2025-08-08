@@ -19,6 +19,9 @@ class Fish:
             self.mouth_motor = Motor(forward=2, backward=3, pwm=True)
             # self.button = Button(32)
             print('Motors and buttons initialized')
+            self.head_motor.forward(speed=0.5)
+            sleep(0.5)
+            self.head_motor.stop()
         except Exception as e:
             print(f'Error configuring motors: {e}')
 
@@ -38,17 +41,25 @@ class Fish:
         sleep(duration*.25)
         self.head_motor.stop()
 
-    def talk(self, duration):
+    def talk(self, timestamps):
         start_time = time.time()
-        while time.time() - start_time < duration:
-            self.head_motor.forward(speed=0.4)
-            self.mouth_motor.forward(speed=1)
-            sleep(.5)
-            self.mouth_motor.backward(speed=1)
-            sleep(.3)
-        self.head_motor.backward(speed=0.4)
-        self.head_motor.stop()
-        self.mouth_motor.stop()
+        end_time = timestamps[-1] + 0.5 if timestamps else 0
+        timestamp_iter = iter(timestamps)
+        next_word_time = next(timestamp_iter, None)
+
+        while time.time() - start_time < end_time:
+            curr_time = time.time() - start_time
+            if next_word_time is not None and curr_time >= next_word_time:
+                self.mouth_motor.forward(speed=1)
+                sleep(.2)
+                self.mouth_motor.backward(speed=1)
+                sleep(.1)
+                self.mouth_motor.stop()
+                next_word_time = next(timestamp_iter, None)
+            else:
+                self.head_motor.forward(speed=0.2)
+                sleep(0.1)
+                self.head_motor.stop()
 
     def move_head_out(self):
         self.head_motor.forward()

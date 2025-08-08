@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 import subprocess
 from elevenlabs import ElevenLabs
 import threading
-from mutagen.mp3 import MP3
 
 load_dotenv()
 
@@ -21,26 +20,26 @@ client = ElevenLabs(
 def generate_speech(text, fish_instance, voice_id=voice_ids[0]):
     temp_file_path = None
     try:
-        audio_stream = client.text_to_speech.convert(
+        response = client.text_to_speech.convert_with_timestamps(
             voice_id=voice_id,
             output_format='mp3_44100_128',
             text=text,
             model_id='eleven_flash_v2_5'
         )
 
+        audio_stream = response['audio_base64']
+        timestamps = response['alignment']['word_start_times_seconds']
+
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_audio_file:
-            for chunk in audio_stream:
-                temp_audio_file.write(chunk)
+            temp_audio_file.write(audio_stream)
             temp_file_path = temp_audio_file.name
 
         print(f'Audio saved to: {temp_file_path}')
 
         try:
-            audio = MP3(temp_file_path)
-            audio_duration = audio.info.length
             if fish_instance:
                 animation_thread = threading.Thread(
-                    target=fish_instance.talk, args=(audio_duration,))
+                    target=fish_instance.talk, args=(timestamps,))
                 animation_thread.start()
             subprocess.run(['mpg123', '-q', temp_file_path], check=True)
             if fish_instance:
