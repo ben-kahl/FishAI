@@ -47,16 +47,16 @@ class Fish:
         timestamp_iter = iter(timestamps)
         next_character_time = next(timestamp_iter, None)
 
-        talk_threshhold = 0.15
+        talk_threshhold = 0.4
         last_animation_time = -1
         while time.time() - start_time < end_time:
             curr_time = time.time() - start_time
             if next_character_time is not None and curr_time >= next_character_time:
                 if curr_time - last_animation_time > talk_threshhold:
                     self.mouth_motor.forward(speed=1)
-                    sleep(.1)
+                    sleep(.3)
                     self.mouth_motor.backward(speed=1)
-                    sleep(.05)
+                    sleep(.1)
                     self.mouth_motor.stop()
                     last_animation_time = curr_time
                 next_word_time = next(timestamp_iter, None)
