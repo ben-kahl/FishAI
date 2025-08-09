@@ -11,6 +11,8 @@ class FishInstance:
         self.instance = None
 
 
+selected_personality = gemini_handler.personalities[0]
+
 fish_instance = FishInstance()
 
 
@@ -79,19 +81,19 @@ def test_elevenlabs():
 def update_personality():
     action = request.form.get('action')
     if action == 'depressed':
-        gemini_handler.personality_state.selected_personality = 0
+        selected_personality = gemini_handler.personalities[0]
         return "Personality changed to depressed"
     elif action == 'sassy':
-        gemini_handler.personality_state.selected_personality = 1
+        selected_personality = gemini_handler.personalities[1]
         return "Personality changed to sassy"
     elif action == 'normal':
-        gemini_handler.personality_state.selected_personality = 2
+        selected_personality = gemini_handler.personalities[2]
         return "Personality changed to normal"
     elif action == 'strange':
-        gemini_handler.personality_state.selected_personality = 3
+        selected_personality = gemini_handler.personalities[3]
         return "Personality changed to strange"
     elif action == 'excited':
-        gemini_handler.personality_state.selected_personality = 4
+        selected_personality = gemini_handler.personalities[4]
         return "Personality changed to excited"
     else:
         return "Invalid action", 400

@@ -16,7 +16,7 @@ API_KEY = os.getenv('PICOVOICE_API_KEY')
 KEYWORD_PATH = "./wake_word.ppn"
 
 
-def run_pipeline(fish_instance):
+def run_pipeline(fish_instance, selected_personality):
     leopard = None
     recorder = None
     porcupine = None
@@ -31,7 +31,6 @@ def run_pipeline(fish_instance):
         fish_instance.head_motor.forward(speed=0.5)
         sleep(0.5)
         fish_instance.head_motor.stop()
-
 
         while True:
             recorder.start()
@@ -58,7 +57,9 @@ def run_pipeline(fish_instance):
                 print(f'pico transcription: {transcript}')
 
                 if transcript:
-                    gemini_res = gemini_handler.gemini_request(transcript)
+                    print(selected_personality)
+                    gemini_res = gemini_handler.gemini_request(
+                        transcript, selected_personality)
                     print(f'Gemini response: {gemini_res}')
                     voice_output.generate_speech(gemini_res, fish_instance)
     except KeyboardInterrupt:

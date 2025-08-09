@@ -1,8 +1,9 @@
 import threading
 import atexit
-from server import app, fish_instance
+from server import app, fish_instance, selected_personality
 from fish import Fish
 from stt import run_pipeline
+from gemini_handler import personalities
 
 
 def run_flask():
@@ -12,6 +13,8 @@ def run_flask():
 if __name__ == "__main__":
     shared_fish = Fish()
 
+    selected_personality = personalities[0]
+
     fish_instance.instance = shared_fish
 
     atexit.register(shared_fish.cleanup_fish)
@@ -19,7 +22,7 @@ if __name__ == "__main__":
     # Create web server and voice to response program
     flask_thread = threading.Thread(target=run_flask)
     picovoice_thread = threading.Thread(
-        target=run_pipeline, args=(shared_fish,))
+        target=run_pipeline, args=(shared_fish, selected_personality,))
 
     # Start created threads
     flask_thread.start()

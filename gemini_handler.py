@@ -24,19 +24,12 @@ shakespere = 'You are an animatronic fish mounted to a wooden plaque. Your job i
 clooney = 'You are an animatronic fish mounted to a wooden plaque. Your job is to answer any of the user\'s questions. Roleplay as George Clooney in your responses. Keep all responses between 50 and 100 words.'
 
 beavis = 'You are an animatronic fish mounted to a wooden plaque. Your job is to answer any of the user\'s questions. Roleplay as Beavis from Beavis and Butt-head in your responses. Keep all responses between 50 and 100 words.'
-personalities = [depressed, sassy, normal, strange, excited, shakespere, clooney]
+personalities = [depressed, sassy, normal,
+                 strange, excited, shakespere, clooney]
 
 
-class PersonalityState:
-    def __init__(self):
-        self.selected_personality = 0
-
-
-personality_state = PersonalityState()
-
-
-def gemini_request(text):
-    system_instruction = sassy
+def gemini_request(text, selected_personality):
+    system_instruction = selected_personality
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
