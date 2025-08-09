@@ -12,7 +12,8 @@ load_dotenv()
 API_KEY = os.getenv('ELEVENLABS_API_KEY')
 
 hank = '6F5Zhi321D3Oq7v1oNT4'
-voice_ids = [hank]
+james = 'EkK5I93UQWFDigLMpZcX'
+voice_ids = [hank, james]
 
 client = ElevenLabs(
     api_key=API_KEY,

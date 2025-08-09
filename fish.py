@@ -47,20 +47,19 @@ class Fish:
         timestamp_iter = iter(timestamps)
         next_character_time = next(timestamp_iter, None)
 
-        talk_threshhold = 0.4
+        talk_threshhold = 0.2
         last_animation_time = -1
         last_head_movement = -1
-        head_threshold = 1
+        head_threshold = 2
         while time.time() - start_time < end_time:
             curr_time = time.time() - start_time
+            self.head_motor.forward(speed=0.4)
             if next_character_time is not None and curr_time >= next_character_time:
-                if curr_time - last_head_movement > head_threshold:
-                    self.head_motor.forward(speed=0.4)
                 if curr_time - last_animation_time > talk_threshhold:
                     self.mouth_motor.forward(speed=1)
-                    sleep(.2)
+                    sleep(.15)
                     self.mouth_motor.backward(speed=1)
-                    sleep(.1)
+                    sleep(.05)
                     self.mouth_motor.stop()
                     last_animation_time = curr_time
                 next_character_time = next(timestamp_iter, None)
@@ -111,7 +110,7 @@ if __name__ == '__main__':
             case 3:
                 fish.move_tail_out()
             case 4:
-                fish.talk()
+                fish.talk([0, 0.5, 1.0, 1.5, 2.0])
             case 5:
                 fish.listen(3)
             case 6:

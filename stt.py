@@ -7,6 +7,7 @@ import time
 import gemini_handler
 import voice_output
 import threading
+from time import sleep
 
 
 load_dotenv()
@@ -27,6 +28,10 @@ def run_pipeline(fish_instance):
             sensitivities=[0.8])
 
         print('Picovoice pipeline running')
+        fish_instance.head_motor.forward(speed=0.5)
+        sleep(0.5)
+        fish_instance.head_motor.stop()
+
 
         while True:
             recorder.start()
@@ -39,11 +44,11 @@ def run_pipeline(fish_instance):
                 recorder.start()
                 if fish_instance:
                     listen_thread = threading.Thread(
-                        target=fish_instance.listen, args=(3,))
+                        target=fish_instance.listen, args=(5,))
                     listen_thread.start()
 
                 start_time = time.time()
-                while time.time() - start_time < 3:
+                while time.time() - start_time < 5:
                     audio_frames.extend(recorder.read())
 
                 if fish_instance:
