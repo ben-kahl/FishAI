@@ -11,6 +11,11 @@ class FishInstance:
         self.instance = None
 
 
+class PersonalityInstance:
+    def __init__(self):
+        self.instance = None
+
+
 selected_personality = gemini_handler.personalities[0]
 
 fish_instance = FishInstance()
