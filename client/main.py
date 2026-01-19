@@ -64,6 +64,7 @@ class FishClient:
                 if response.status_code == 200:
                     data = response.json()
                     cmd = data.get("command")
+                    print(f"Response: {data}")
                     if cmd:
                         # print(f"Executing command from cloud: {
                         #     cmd.get('type')}")

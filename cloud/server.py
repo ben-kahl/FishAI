@@ -42,6 +42,7 @@ def control_fish():
 
 @app.route('/generate_query', methods=['POST'])
 def generate_query():
+    print("Recieved query")
     user_text = request.form.get('user_text')
     if not user_text:
         return jsonify({'error': 'No text input into form'}), 400
@@ -68,6 +69,7 @@ def generate_query():
     # Push command to queue
     if db:
         db.rpush(COMMAND_QUEUE_KEY, json.dumps(payload))
+        print("Command pushed to db")
         return jsonify({"status": "success", "response": gemini_res
                         })
     else:
