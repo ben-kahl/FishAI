@@ -56,7 +56,7 @@ def generate_query():
             gemini_res)
     except Exception as e:
         return jsonify({"error": f"Error generating speech: {e}"}), 500
-    audio_b64_string = base64.b64decode(audio_bytes).decode('utf-8')
+    audio_b64_string = base64.b64encode(audio_bytes).decode('utf-8')
 
     payload = {
         "type": "speach",
