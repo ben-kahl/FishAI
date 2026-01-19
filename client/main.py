@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CLOUD_URL = os.getenv('CLOUD_URL', '192.168.87.255:5000')
+CLOUD_URL = os.getenv('CLOUD_URL', '192.168.87.237:5000')
 API_KEY = os.getenv('PICOVOICE_API_KEY')
 KEYWORD_PATH = "./wake_word.ppn"
 
@@ -65,8 +65,8 @@ class FishClient:
                     data = response.json()
                     cmd = data.get("command")
                     if cmd:
-                        print(f"Executing command from cloud: {
-                              cmd.get('type')}")
+                        # print(f"Executing command from cloud: {
+                        #     cmd.get('type')}")
                         if cmd.get('type') == 'motor':
                             action = cmd.get('action')
                             match action:
