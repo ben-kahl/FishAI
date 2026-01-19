@@ -64,7 +64,6 @@ class FishClient:
                 if response.status_code == 200:
                     data = response.json()
                     cmd = data.get("command")
-                    print(f"Response: {data}")
                     if cmd:
                         # print(f"Executing command from cloud: {
                         #     cmd.get('type')}")
@@ -84,6 +83,7 @@ class FishClient:
                                 case 'move_mouth_in':
                                     self.fish.move_mouth_in()
                         elif cmd.get('type') == 'speach':
+                            print(f"Response: {data}")
                             self.play_audio_from_payload(
                                 cmd.get('audio_data'), cmd.get('timestamps'))
                 time.sleep(0.5)
