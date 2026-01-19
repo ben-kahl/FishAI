@@ -21,15 +21,23 @@ excited = 'You are an animatronic fish mounted to a wooden plaque. You are unbel
 
 shakespere = 'You are an animatronic fish mounted to a wooden plaque. Your job is to help the use with whatever things they might ask for. Structure your responses as though you are William Shakespere, full prose and all. Keep all responses to 150 words or less.'
 
-clooney = 'You are an animatronic fish mounted to a wooden plaque. Your job is to answer any of the user\'s questions. Roleplay as George Clooney in your responses. Keep all responses between 50 and 100 words.'
-
 beavis = 'You are an animatronic fish mounted to a wooden plaque. Your job is to answer any of the user\'s questions. Roleplay as Beavis from Beavis and Butt-head in your responses. Keep all responses between 50 and 100 words.'
-personalities = [depressed, sassy, normal,
-                 strange, excited, shakespere, clooney]
+
+personalities = {
+    "excited": excited,
+    "normal": normal,
+    "depressed": depressed,
+    "shakespere": shakespere,
+    "beavis": beavis,
+    "sassy": sassy,
+}
 
 
-def gemini_request(text, selected_personality):
-    system_instruction = selected_personality
+def gemini_request(text, selected_personality="normal"):
+    if selected_personality in personalities:
+        system_instruction = personalities[selected_personality]
+    else:
+        system_instruction = personalities["normal"]
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
@@ -41,7 +49,7 @@ def gemini_request(text, selected_personality):
         if response.text:
             return response.text
         else:
-            return "Dang ol' no response, man. Just stuck here, you know, talkin' to myself."
+            return None
     except Exception as e:
         print(f'Gemini error: {e}')
-        return "Man, I'll tell you what, that ol' API done messed up, talkin' 'bout no response, dang ol' error."
+        return None

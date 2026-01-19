@@ -1,0 +1,95 @@
+import os
+import json
+import base64
+import redis
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import gemini_handler
+import eleven_labs_handler
+
+app = Flask(__name__)
+CORS(app)
+
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+try:
+    db = redis.from_url(REDIS_URL)
+    db.ping()
+    print("Successfully connected to Redis")
+except redis.ConnectionError:
+    print("ERROR: Redis failed to connect. Restart the server")
+    db = None
+COMMAND_QUEUE_KEY = "fish_command_queue"
+
+
+# Frontend Endpoints
+@app.route('/control_fish', methods=['POST'])
+def control_fish():
+    action = request.form.get('action')
+    if not action:
+        return jsonify({"error": "No action provided"}), 400
+
+    payload = {
+        "type": "motor",
+        "action": action
+    }
+
+    if db:
+        db.rpush(COMMAND_QUEUE_KEY, json.dumps(payload))
+        return jsonify({"status": "queued", "action": action})
+    else:
+        return jsonify({"error": "Failed to queue command"}), 500
+
+
+@app.route('/generate_queury', methods=['POST'])
+def generate_queury():
+    user_text = request.form.get('user_text')
+    if not user_text:
+        return jsonify({'error': 'No text input into form'}), 400
+
+    try:
+
+        gemini_res = gemini_handler.gemini_request(user_text)
+    except Exception as e:
+        return jsonify({"error": f"Gemini Error: {str(e)}"}), 500
+    try:
+        audio_bytes, timestamps = eleven_labs_handler.generate_speech(
+            gemini_res)
+    except Exception as e:
+        return jsonify({"error": f"Error generating speech: {e}"}), 500
+    audio_b64_string = base64.b64decode(audio_bytes).decode('utf-8')
+
+    payload = {
+        "type": "speach",
+        "text": gemini_res,
+        "audio_data": audio_b64_string,
+        "timestamps": timestamps
+    }
+
+    # Push command to queue
+    if db:
+        db.rpush(COMMAND_QUEUE_KEY, json.dumps(payload))
+        return jsonify({"status": "success", "response": gemini_res
+                        })
+    else:
+        return jsonify({"error": "Database unavailable"}), 500
+
+
+# Client Endpoints
+@app.route('/get_commands', methods=['GET'])
+def get_commands():
+    if not db:
+        return jsonify({"command": None})
+    # Get and send oldest command from the queue
+    item = db.lpop(COMMAND_QUEUE_KEY)
+
+    if item:
+        command_data = json.loads(item.decode('utf-8'))
+        return jsonify({"command": command_data})
+    else:
+        return jsonify({"command": None})
+
+
+if __name__ == '__main__':
+    # This is for running the server directly for testing
+    # The main execution is now in main.py
+    app.run(host='0.0.0.0', debug=True)

@@ -1,6 +1,6 @@
 ''' Motor Driver Code for Big Mouth Billy Bass Hardware '''
 
-from gpiozero import Motor, Button
+from gpiozero import Motor
 from time import sleep
 import time
 
@@ -98,6 +98,7 @@ class Fish:
 
 if __name__ == '__main__':
     fish = Fish()
+    # Used for debugging
     while True:
         user_in = input(
             'Input a fish command (1 for mouth, 2 for head, 3 for tail, 4 for talk, 5 for listen, 6 to exit)'
