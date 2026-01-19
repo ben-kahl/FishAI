@@ -1,0 +1,8 @@
+pvleopard
+requests
+RPi.GPIO
+gpiozero
+python-dotenv
+pvrecorder
+pvporcupine
+mutagen

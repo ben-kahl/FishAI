@@ -1,4 +1,4 @@
 /env
 /venv
-./cloud/.env
+.env
 /__pycache__
