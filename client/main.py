@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CLOUD_URL = os.getenv('CLOUD_URL', '192.168.87.237:5000')
+CLOUD_URL = os.getenv('CLOUD_URL', 'http://192.168.87.237:5000')
 API_KEY = os.getenv('PICOVOICE_API_KEY')
 KEYWORD_PATH = "./wake_word.ppn"
 
@@ -125,10 +125,10 @@ class FishClient:
                     transcript, _ = leopard.process(audio_frames)
                     print(f'pico transcription: {transcript}')
 
-                if transcript:
-                    requests.post(f"{CLOUD_URL}/generate_query",
-                                  data={'user_text': transcript})
-                    print("Sent query to cloud.")
+                    if transcript:
+                        requests.post(f"{CLOUD_URL}/generate_query",
+                                      data={'user_text': transcript})
+                        print("Sent query to cloud.")
         except Exception as e:
             print(f'Audio Error: {e}')
         finally:
