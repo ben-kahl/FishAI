@@ -40,8 +40,8 @@ def control_fish():
         return jsonify({"error": "Failed to queue command"}), 500
 
 
-@app.route('/generate_queury', methods=['POST'])
-def generate_queury():
+@app.route('/generate_query', methods=['POST'])
+def generate_query():
     user_text = request.form.get('user_text')
     if not user_text:
         return jsonify({'error': 'No text input into form'}), 400
