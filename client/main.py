@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CLOUD_URL = os.getenv('CLOUD_URL', 'http://192.168.1.100:5000')
+CLOUD_URL = os.getenv('CLOUD_URL', '192.168.87.255:5000')
 API_KEY = os.getenv('PICOVOICE_API_KEY')
 KEYWORD_PATH = "./wake_word.ppn"
 
