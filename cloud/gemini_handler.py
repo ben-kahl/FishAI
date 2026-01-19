@@ -40,7 +40,7 @@ def gemini_request(text, selected_personality="normal"):
         system_instruction = personalities["normal"]
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-2.5-flash-lite',
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
                 thinking_config=types.ThinkingConfig(thinking_budget=0)
