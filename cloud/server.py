@@ -52,7 +52,7 @@ def generate_queury():
     except Exception as e:
         return jsonify({"error": f"Gemini Error: {str(e)}"}), 500
     try:
-        audio_bytes, timestamps = eleven_labs_handler.generate_speech(
+        audio_bytes, timestamps = eleven_labs_handler.generate_audio(
             gemini_res)
     except Exception as e:
         return jsonify({"error": f"Error generating speech: {e}"}), 500
