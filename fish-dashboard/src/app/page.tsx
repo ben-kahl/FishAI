@@ -10,7 +10,7 @@ type Message = {
 }
 
 export default function Home() {
-  const [serverUrl, setServerUrl] = useState("https://qammmq2ddr.us-east-1.awsapprunner.com");
+  const [serverUrl, setServerUrl] = useState(process.env.BACKEND_URL || "http://localhost:5000");
   const [inputText, setInputText] = useState("");
   const [status, setStatus] = useState("Ready");
   const [volume, setVolume] = useState(50);
