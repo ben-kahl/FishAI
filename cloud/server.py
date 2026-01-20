@@ -44,12 +44,14 @@ def control_fish():
 def generate_query():
     print("Recieved query")
     user_text = request.form.get('user_text')
+    personality = request.form.get('personality', 'normal')
     if not user_text:
         return jsonify({'error': 'No text input into form'}), 400
 
     try:
 
-        gemini_res = gemini_handler.gemini_request(user_text)
+        gemini_res = gemini_handler.gemini_request(
+            user_text, selected_personality=personality)
     except Exception as e:
         return jsonify({"error": f"Gemini Error: {str(e)}"}), 500
     try:
@@ -70,10 +72,29 @@ def generate_query():
     if db:
         db.rpush(COMMAND_QUEUE_KEY, json.dumps(payload))
         print("Command pushed to db")
-        return jsonify({"status": "success", "response": gemini_res
-                        })
+        return jsonify({"status": "success", "response": gemini_res, "personality": personality})
     else:
         return jsonify({"error": "Database unavailable"}), 500
+
+
+@app.route('/set_volume', methods=['POST'])
+def set_volume():
+    try:
+        volume_level = request.form.get('level')
+        if not volume_level:
+            return jsonify({"error": "No volume level provided"}), 400
+        payload = {
+            "type": "volume",
+            "level": int(volume_level)
+        }
+
+        if db:
+            db.rpush(COMMAND_QUEUE_KEY, json.dumps(payload))
+            return jsonify({"status": "queued", "level": volume_level})
+        else:
+            return jsonify({"error": "Database unavailable"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Client Endpoints

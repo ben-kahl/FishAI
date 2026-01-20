@@ -85,6 +85,14 @@ class FishClient:
                             print(f"Response: {data}")
                             self.play_audio_from_payload(
                                 cmd.get('audio_data'), cmd.get('timestamps'))
+                        elif cmd.get('type') == 'volume':
+                            level = cmd.get('level')
+                            print(f"Setting volume to {level}%")
+                            try:
+                                subprocess.run(
+                                    ['amixer', 'sset', 'PCM', f'{level}%'], check=False)
+                            except Exception as e:
+                                print(f"Failed to set volume: {e}")
             except requests.Timeout:
                 continue
             except Exception as e:
