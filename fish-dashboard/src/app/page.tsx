@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import styles from "./page.module.css";
 import React from "react";
+
+type Message = {
+  role: 'user' | 'fish';
+  text: string;
+}
 
 export default function Home() {
   const [serverUrl, setServerUrl] = useState("https://qammmq2ddr.us-east-1.awsapprunner.com");
@@ -11,6 +16,12 @@ export default function Home() {
   const [volume, setVolume] = useState(50);
   const [personality, setPersonality] = useState("normal");
   const [fishStatus, setFishStatus] = useState<any>(null);
+  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory]);
 
   const personalities = [
     "normal",
@@ -32,12 +43,15 @@ export default function Home() {
       if (res.ok) {
         setStatus("Success");
         setTimeout(() => setStatus("Ready"), 3000);
+        return await res.json();
       } else {
         setStatus("Error: " + res.statusText);
+        return null;
       }
     } catch (error) {
       console.error(error);
       setStatus("Connection to Server Failed");
+      return null;
     }
   };
 
@@ -47,13 +61,19 @@ export default function Home() {
     handleCommand("/control_fish", data);
   };
 
-  const sendSpeakCommand = () => {
+  const sendSpeakCommand = async () => {
     if (!inputText) return;
+    const userMsg = inputText;
+    setChatHistory(prev => [...prev, { role: 'user', text: userMsg }]);
+
     const data = new FormData();
     data.append("user_text", inputText);
     data.append("personality", personality);
-    handleCommand("/generate_query", data);
-    setInputText("");
+    const responseData = await handleCommand("/generate_query", data);
+    if (responseData && responseData.response) {
+      setChatHistory(prev => [...prev, { role: 'fish', text: responseData.response }]);
+      setInputText("");
+    }
   }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,6 +112,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
+        {/* Header */}
         <div className={styles.header}>
           <h1>FishAI Controller</h1>
           <div className={styles.connection}>
@@ -99,7 +120,7 @@ export default function Home() {
               type="text"
               value={serverUrl}
               onChange={(e) => setServerUrl(e.target.value)}
-              placeholder="Server URL (e.g. http://192.168.1.5:5000)"
+              placeholder="Server URL"
             />
             <span className={`${styles.status} ${status !== 'Ready' ? styles.active : ''}`}>
               {status}
@@ -107,6 +128,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Telemetry Status Panel */}
         <section className={`${styles.card} ${styles.fullWidth}`}>
           <div className={styles.telemetryHeader}>
             <h2>System Status</h2>
@@ -114,8 +136,7 @@ export default function Home() {
               {fishStatus?.status === 'online' ? 'ONLINE' : 'OFFLINE'}
             </span>
           </div>
-
-          {fishStatus?.status === 'online' && fishStatus.data ? (
+          {fishStatus?.status === 'online' && fishStatus.data && (
             <div className={styles.statsGrid}>
               <div className={styles.statBox}>
                 <span className={styles.statLabel}>CPU Load</span>
@@ -134,10 +155,9 @@ export default function Home() {
                 <span className={styles.statValue}>{getTimeSince(fishStatus.data.last_seen)}</span>
               </div>
             </div>
-          ) : (
-            <p className={styles.offlineMsg}>Waiting for signal from Fish...</p>
           )}
         </section>
+
         <div className={styles.grid}>
           {/* Movement Controls */}
           <section className={styles.card}>
@@ -161,45 +181,53 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Personality & Volume */}
+          {/* Settings */}
           <section className={styles.card}>
             <h2>Settings</h2>
             <div className={styles.settingGroup}>
               <label>Personality</label>
-              <select
-                value={personality}
-                onChange={(e) => setPersonality(e.target.value)}
-              >
+              <select value={personality} onChange={(e) => setPersonality(e.target.value)}>
                 {personalities.map(p => (
                   <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
                 ))}
               </select>
             </div>
-
             <div className={styles.settingGroup}>
               <label>Volume: {volume}%</label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume}
-                onChange={handleVolumeChange}
-              />
+              <input type="range" min="0" max="100" value={volume} onChange={handleVolumeChange} />
             </div>
           </section>
 
-          {/* Text to Speech */}
+          {/* Chat Interface */}
           <section className={`${styles.card} ${styles.fullWidth}`}>
-            <h2>Speak</h2>
+            <h2>Conversation</h2>
+
+            <div className={styles.historyWindow}>
+              {chatHistory.length === 0 ? (
+                <p className={styles.emptyHistory}>Start chatting with the fish!</p>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div key={idx} className={`${styles.message} ${msg.role === 'user' ? styles.userMsg : styles.fishMsg}`}>
+                    <div className={styles.msgBubble}>
+                      <span className={styles.msgRole}>{msg.role === 'user' ? 'You' : 'Fish'}</span>
+                      <p>{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              <div ref={chatEndRef} />
+            </div>
+
             <div className={styles.chatBox}>
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Type something for the fish to say..."
-                rows={3}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendSpeakCommand(); } }}
+                placeholder="Type a message..."
+                rows={2}
               />
-              <button onClick={sendSpeakCommand} disabled={!inputText}>
-                Send to Fish
+              <button onClick={sendSpeakCommand} disabled={!inputText || status === "Sending..."}>
+                Send
               </button>
             </div>
           </section>
