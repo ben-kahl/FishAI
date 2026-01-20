@@ -5,7 +5,7 @@ After=network.target sound.target
 [Service]
 user=[replace with your user]
 WorkingDirectory=/home/bkahl/FishAI
-ExecStart=/home/bkahl/FishAI/venv/bin/python -u /home/bkahl/FishAI/main.py
+ExecStart=/home/bkahl/FishAI/venv/bin/python -u /home/bkahl/FishAI/client/main.py
 Restart=always
 
 [Install]
