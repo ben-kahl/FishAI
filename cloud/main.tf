@@ -11,6 +11,8 @@ resource "aws_ecr_repository" "fish_backend" {
 resource "aws_iam_role" "app_runner_role" {
   name = "AppRunnerECRAccessRole"
 
+  path = "/service-role/"
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -79,7 +81,14 @@ resource "aws_apprunner_service" "fish_service" {
       }
     }
   }
+  observability_configuration {
+    observability_enabled = false
+  }
+
   instance_configuration {
     instance_role_arn = aws_iam_role.instance_role.arn
+
+    cpu    = "512"
+    memory = "1024"
   }
 }
