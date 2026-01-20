@@ -82,13 +82,18 @@ def get_commands():
     if not db:
         return jsonify({"command": None})
     # Get and send oldest command from the queue
-    item = db.lpop(COMMAND_QUEUE_KEY)
+    try:
+        result = db.blpop(COMMAND_QUEUE_KEY, timeout=20)
 
-    if item:
-        command_data = json.loads(item.decode('utf-8'))
-        return jsonify({"command": command_data})
-    else:
-        return jsonify({"command": None})
+        if result:
+            item = result[1]
+            command_data = json.loads(item.decode('utf-8'))
+            return jsonify({"command": command_data})
+        else:
+            return jsonify({"command": None})
+    except redis.RedisError as e:
+        print(f"Redis Error: {e}")
+        return jsonify({'command': None})
 
 
 if __name__ == '__main__':

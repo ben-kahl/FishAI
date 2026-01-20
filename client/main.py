@@ -60,13 +60,12 @@ class FishClient:
         print("Polling...")
         while self.running:
             try:
-                response = requests.get(f"{CLOUD_URL}/get_commands", timeout=5)
+                response = requests.get(
+                    f"{CLOUD_URL}/get_commands", timeout=25)
                 if response.status_code == 200:
                     data = response.json()
                     cmd = data.get("command")
                     if cmd:
-                        # print(f"Executing command from cloud: {
-                        #     cmd.get('type')}")
                         if cmd.get('type') == 'motor':
                             action = cmd.get('action')
                             match action:
@@ -86,7 +85,8 @@ class FishClient:
                             print(f"Response: {data}")
                             self.play_audio_from_payload(
                                 cmd.get('audio_data'), cmd.get('timestamps'))
-                time.sleep(0.5)
+            except requests.Timeout:
+                continue
             except Exception as e:
                 print(f"Connection Error: {e}")
                 time.sleep(2)
