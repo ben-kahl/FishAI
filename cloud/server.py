@@ -99,4 +99,5 @@ def get_commands():
 if __name__ == '__main__':
     # This is for running the server directly for testing
     # The main execution is now in main.py
+    print("Starting server")
     app.run(host='0.0.0.0', debug=True)
