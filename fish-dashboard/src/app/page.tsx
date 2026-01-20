@@ -129,34 +129,36 @@ export default function Home() {
         </div>
 
         {/* Telemetry Status Panel */}
-        <section className={`${styles.card} ${styles.fullWidth}`}>
-          <div className={styles.telemetryHeader}>
-            <h2>System Status</h2>
-            <span className={fishStatus?.status === 'online' ? styles.badgeOnline : styles.badgeOffline}>
-              {fishStatus?.status === 'online' ? 'ONLINE' : 'OFFLINE'}
-            </span>
-          </div>
-          {fishStatus?.status === 'online' && fishStatus.data && (
-            <div className={styles.statsGrid}>
-              <div className={styles.statBox}>
-                <span className={styles.statLabel}>CPU Load</span>
-                <span className={styles.statValue}>{fishStatus.data.cpu_usage}%</span>
-              </div>
-              <div className={styles.statBox}>
-                <span className={styles.statLabel}>Memory</span>
-                <span className={styles.statValue}>{fishStatus.data.memory_usage}%</span>
-              </div>
-              <div className={styles.statBox}>
-                <span className={styles.statLabel}>Temp</span>
-                <span className={styles.statValue}>{fishStatus.data.temperature}°C</span>
-              </div>
-              <div className={styles.statBox}>
-                <span className={styles.statLabel}>Last Heartbeat</span>
-                <span className={styles.statValue}>{getTimeSince(fishStatus.data.last_seen)}</span>
-              </div>
+        <div className={styles.telemetryBox}>
+          <section className={`${styles.card} ${styles.fullWidth}`}>
+            <div className={styles.telemetryHeader}>
+              <h2>System Status</h2>
+              <span className={fishStatus?.status === 'online' ? styles.badgeOnline : styles.badgeOffline}>
+                {fishStatus?.status === 'online' ? 'ONLINE' : 'OFFLINE'}
+              </span>
             </div>
-          )}
-        </section>
+            {fishStatus?.status === 'online' && fishStatus.data && (
+              <div className={styles.statsGrid}>
+                <div className={styles.statBox}>
+                  <span className={styles.statLabel}>CPU Load</span>
+                  <span className={styles.statValue}>{fishStatus.data.cpu_usage}%</span>
+                </div>
+                <div className={styles.statBox}>
+                  <span className={styles.statLabel}>Memory</span>
+                  <span className={styles.statValue}>{fishStatus.data.memory_usage}%</span>
+                </div>
+                <div className={styles.statBox}>
+                  <span className={styles.statLabel}>Temp</span>
+                  <span className={styles.statValue}>{fishStatus.data.temperature}°C</span>
+                </div>
+                <div className={styles.statBox}>
+                  <span className={styles.statLabel}>Last Heartbeat</span>
+                  <span className={styles.statValue}>{getTimeSince(fishStatus.data.last_seen)}</span>
+                </div>
+              </div>
+            )}
+          </section>
+        </div>
 
         <div className={styles.grid}>
           {/* Movement Controls */}
