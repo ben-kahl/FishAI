@@ -2,6 +2,7 @@ import os
 import json
 import base64
 import redis
+import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import gemini_handler
@@ -20,8 +21,35 @@ except redis.ConnectionError:
     db = None
 COMMAND_QUEUE_KEY = "fish_command_queue"
 
+HEALTH_KEY = "fish_health"
+
 
 # Frontend Endpoints
+@app.route('/health', methods=['POST'])
+def health():
+    data = request.json
+    if not data:
+        return jsonify({"error": "No Data"}), 400
+    data['last_seen'] = time.time()
+    if db:
+        db.setex(HEALTH_KEY, 30, json.dumps(data))
+        return jsonify({"status": "ok"})
+    else:
+        return jsonify({"error": "Database unavailable"}), 500
+
+
+@app.route('/get_status', methods=['GET'])
+def get_status():
+    if not db:
+        return jsonify({"status": "offline", "error": "Database error"})
+    health_data = db.get(HEALTH_KEY)
+    if health_data:
+        data = json.loads(health_data)
+        return jsonify({"status": "online", "data": data})
+    else:
+        return jsonify({"status": "offline"})
+
+
 @app.route('/control_fish', methods=['POST'])
 def control_fish():
     action = request.form.get('action')

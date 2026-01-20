@@ -5,6 +5,7 @@ import json
 import subprocess
 import base64
 import requests
+import psutil
 from fish import Fish
 import pvleopard
 from pvrecorder import PvRecorder
@@ -26,8 +27,10 @@ class FishClient:
     def start(self):
         poll_thread = threading.Thread(target=self.poll_cloud)
         listen_thread = threading.Thread(target=self.listen)
+        health_thread = threading.Thread(target=self.send_health)
         poll_thread.start()
         listen_thread.start()
+        health_thread.start()
 
         try:
             while True:
@@ -35,6 +38,9 @@ class FishClient:
         except KeyboardInterrupt:
             self.running = False
             self.fish.cleanup_fish()
+            poll_thread.join()
+            listen_thread.join()
+            health_thread.join()
             print("Shutting down...")
 
     def play_audio_from_payload(self, audio_b64, timestamps):
@@ -147,6 +153,29 @@ class FishClient:
                 porcupine.delete()
             if leopard:
                 leopard.delete()
+
+    def send_health(self):
+        while self.running:
+            try:
+                try:
+                    temp = subprocess.check_output(
+                        "vcgencmd measure_temp", shell=True)
+                    temp = temp.decode(
+                        'utf-8').replace("temp=", "").replace("'C\n", "")
+                except:
+                    temp = "N/A"
+
+                payload = {
+                    "cpu_usage": psutil.cpu_percent(),
+                    "memory_usage": psutil.virtual_memory().percent,
+                    "temperature": temp,
+                    "platform": "Raspberry Pi 4b"
+                }
+
+                requests.post(f"{CLOUD_URL}/health", json=payload, timeout=2)
+            except Exception as e:
+                print(f"Health check failed: {e}")
+            time.sleep(10)
 
 
 if __name__ == "__main__":

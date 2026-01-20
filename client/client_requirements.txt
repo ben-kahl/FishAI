@@ -6,3 +6,4 @@ python-dotenv
 pvrecorder
 pvporcupine
 mutagen
+psutil

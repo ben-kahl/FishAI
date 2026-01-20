@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import styles from "./page.module.css";
 import React from "react";
 
@@ -10,6 +10,7 @@ export default function Home() {
   const [status, setStatus] = useState("Ready");
   const [volume, setVolume] = useState(50);
   const [personality, setPersonality] = useState("normal");
+  const [fishStatus, setFishStatus] = useState<any>(null);
 
   const personalities = [
     "normal",
@@ -63,6 +64,31 @@ export default function Home() {
     handleCommand("/set_volume", data);
   };
 
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch(`${serverUrl}/get_status`);
+        if (res.ok) {
+          const data = await res.json();
+          setFishStatus(data);
+        }
+      } catch (e) {
+        console.error("Status fetch failed", e);
+        setFishStatus({ status: "offline" });
+      }
+    };
+
+    // Poll every 2 seconds
+    const interval = setInterval(fetchStatus, 2000);
+    fetchStatus(); // Initial fetch
+    return () => clearInterval(interval);
+  }, [serverUrl]);
+
+  const getTimeSince = (timestamp: number) => {
+    const diff = Math.floor(Date.now() / 1000 - timestamp);
+    return `${diff}s ago`;
+  };
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -81,6 +107,37 @@ export default function Home() {
           </div>
         </div>
 
+        <section className={`${styles.card} ${styles.fullWidth}`}>
+          <div className={styles.telemetryHeader}>
+            <h2>System Status</h2>
+            <span className={fishStatus?.status === 'online' ? styles.badgeOnline : styles.badgeOffline}>
+              {fishStatus?.status === 'online' ? 'ONLINE' : 'OFFLINE'}
+            </span>
+          </div>
+
+          {fishStatus?.status === 'online' && fishStatus.data ? (
+            <div className={styles.statsGrid}>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>CPU Load</span>
+                <span className={styles.statValue}>{fishStatus.data.cpu_usage}%</span>
+              </div>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>Memory</span>
+                <span className={styles.statValue}>{fishStatus.data.memory_usage}%</span>
+              </div>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>Temp</span>
+                <span className={styles.statValue}>{fishStatus.data.temperature}°C</span>
+              </div>
+              <div className={styles.statBox}>
+                <span className={styles.statLabel}>Last Heartbeat</span>
+                <span className={styles.statValue}>{getTimeSince(fishStatus.data.last_seen)}</span>
+              </div>
+            </div>
+          ) : (
+            <p className={styles.offlineMsg}>Waiting for signal from Fish...</p>
+          )}
+        </section>
         <div className={styles.grid}>
           {/* Movement Controls */}
           <section className={styles.card}>
