@@ -38,9 +38,6 @@ class FishClient:
         except KeyboardInterrupt:
             self.running = False
             self.fish.cleanup_fish()
-            poll_thread.join()
-            listen_thread.join()
-            health_thread.join()
             print("Shutting down...")
 
     def play_audio_from_payload(self, audio_b64, timestamps):

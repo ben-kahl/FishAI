@@ -1,5 +1,6 @@
 pvleopard
 requests
+rpi-lgpio
 RPi.GPIO
 gpiozero
 python-dotenv
