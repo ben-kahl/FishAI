@@ -172,7 +172,7 @@ class FishClient:
                 requests.post(f"{CLOUD_URL}/health", json=payload, timeout=2)
             except Exception as e:
                 print(f"Health check failed: {e}")
-            time.sleep(10)
+            time.sleep(30)
 
 
 if __name__ == "__main__":

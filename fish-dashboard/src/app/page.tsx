@@ -98,8 +98,8 @@ export default function Home() {
       }
     };
 
-    // Poll every 2 seconds
-    const interval = setInterval(fetchStatus, 2000);
+    // Poll every 10 seconds
+    const interval = setInterval(fetchStatus, 10000);
     fetchStatus(); // Initial fetch
     return () => clearInterval(interval);
   }, [serverUrl]);

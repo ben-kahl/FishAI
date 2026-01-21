@@ -22,6 +22,11 @@ except redis.ConnectionError:
 COMMAND_QUEUE_KEY = "fish_command_queue"
 
 HEALTH_KEY = "fish_health"
+status_cache = {
+    "data": None,
+    "last_read": 0
+}
+CACHE_DURATION = 10
 
 
 # Frontend Endpoints
@@ -32,7 +37,8 @@ def health():
         return jsonify({"error": "No Data"}), 400
     data['last_seen'] = time.time()
     if db:
-        db.setex(HEALTH_KEY, 30, json.dumps(data))
+        db.setex(HEALTH_KEY, 90, json.dumps(data))
+        status_cache["last_read"] = 0
         return jsonify({"status": "ok"})
     else:
         return jsonify({"error": "Database unavailable"}), 500
@@ -42,9 +48,15 @@ def health():
 def get_status():
     if not db:
         return jsonify({"status": "offline", "error": "Database error"})
+    current_time = time.time()
+    if status_cache["data"] and (current_time - status_cache["last_read"] < CACHE_DURATION):
+        return jsonify({"status": "online", "data": status_cache["data"]})
+
     health_data = db.get(HEALTH_KEY)
     if health_data:
         data = json.loads(health_data)
+        status_cache["data"] = data
+        status_cache["last_read"] = current_time
         return jsonify({"status": "online", "data": data})
     else:
         return jsonify({"status": "offline"})
