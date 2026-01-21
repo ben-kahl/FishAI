@@ -28,8 +28,23 @@ status_cache = {
 }
 CACHE_DURATION = 10
 
+PERSONALITY_KEY = "fish_active_personality"
+
 
 # Frontend Endpoints
+@app.route('/set_personality', methods=['POST'])
+def set_personality():
+    personality = request.form.get('personality')
+    if not personality:
+        return jsonify({"error": "No personality provided"}), 400
+    if db:
+        db.set(PERSONALITY_KEY, personality)
+        print(f"Global personality set to {personality}")
+        return jsonify({"status": "success", "personality": personality})
+    else:
+        return jsonify({"error": "Database unavailable"}), 500
+
+
 @app.route('/health', methods=['POST'])
 def health():
     data = request.json
@@ -84,7 +99,19 @@ def control_fish():
 def generate_query():
     print("Recieved query")
     user_text = request.form.get('user_text')
-    personality = request.form.get('personality', 'normal')
+    personality = request.form.get('personality')
+
+    if not personality and db:
+        try:
+            stored = db.get(PERSONALITY_KEY)
+            if stored:
+                personality = stored.decode('utf-8')
+        except Exception as e:
+            print(f"Redis read error: {e}")
+
+    if not personality:
+        personality = 'normal'
+
     if not user_text:
         return jsonify({'error': 'No text input into form'}), 400
 

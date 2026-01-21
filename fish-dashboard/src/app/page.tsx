@@ -84,6 +84,15 @@ export default function Home() {
     handleCommand("/set_volume", data);
   };
 
+  const handlePersonalityChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPersonality = e.target.value;
+    setPersonality(newPersonality);
+    const data = new FormData();
+    data.append("personality", newPersonality);
+
+    await handleCommand("/set_personality", data);
+  };
+
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -188,7 +197,7 @@ export default function Home() {
             <h2>Settings</h2>
             <div className={styles.settingGroup}>
               <label>Personality</label>
-              <select value={personality} onChange={(e) => setPersonality(e.target.value)}>
+              <select value={personality} onChange={handlePersonalityChange}>
                 {personalities.map(p => (
                   <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
                 ))}
