@@ -100,6 +100,7 @@ def generate_query():
     print("Recieved query")
     user_text = request.form.get('user_text')
     personality = request.form.get('personality')
+    image_data = request.form.get('image_data', None)
 
     if not personality and db:
         try:
@@ -118,7 +119,7 @@ def generate_query():
     try:
 
         gemini_res = gemini_handler.gemini_request(
-            user_text, selected_personality=personality)
+            user_text, selected_personality=personality, image_data=image_data)
     except Exception as e:
         return jsonify({"error": f"Gemini Error: {str(e)}"}), 500
     try:
