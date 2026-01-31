@@ -47,8 +47,9 @@ class FishClient:
         try:
             cap = cv2.VideoCapture(CAMERA_INDEX)
             if cap.isOpened():
-                # Warm up camera? Sometimes first frame is black.
-                # Just reading one frame for now to keep it fast.
+                # Read and discard the first 5-10 frames to "warm up"
+                for _ in range(10):
+                    cap.grab()
                 ret, frame = cap.read()
                 if ret:
                     _, buffer = cv2.imencode('.jpg', frame)
@@ -132,8 +133,7 @@ class FishClient:
                 access_key=API_KEY, keyword_paths=[KEYWORD_PATH],
                 sensitivities=[0.8])
 
-            print(f'Picovoice pipeline running using device index: {
-                  MICROPHONE_INDEX}')
+            print(f'Picovoice pipeline running using mic: {MICROPHONE_INDEX}')
 
             recorder.start()
             while self.running:
