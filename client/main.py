@@ -6,6 +6,7 @@ import subprocess
 import base64
 import requests
 import psutil
+import cv2
 from fish import Fish
 import pvleopard
 from pvrecorder import PvRecorder
@@ -17,6 +18,8 @@ load_dotenv()
 CLOUD_URL = os.getenv('CLOUD_URL', 'http://192.168.87.237:5000')
 API_KEY = os.getenv('PICOVOICE_API_KEY')
 KEYWORD_PATH = "./wake_word.ppn"
+MICROPHONE_INDEX = int(os.getenv('MICROPHONE_INDEX', -1))
+CAMERA_INDEX = int(os.getenv('CAMERA_INDEX', 0))
 
 
 class FishClient:
@@ -39,6 +42,21 @@ class FishClient:
             self.running = False
             self.fish.cleanup_fish()
             print("Shutting down...")
+
+    def capture_image_async(self, container):
+        try:
+            cap = cv2.VideoCapture(CAMERA_INDEX)
+            if cap.isOpened():
+                # Warm up camera? Sometimes first frame is black.
+                # Just reading one frame for now to keep it fast.
+                ret, frame = cap.read()
+                if ret:
+                    _, buffer = cv2.imencode('.jpg', frame)
+                    container['data'] = base64.b64encode(
+                        buffer).decode('utf-8')
+                cap.release()
+        except Exception as e:
+            print(f"Image capture failed: {e}")
 
     def play_audio_from_payload(self, audio_b64, timestamps):
         try:
@@ -108,12 +126,14 @@ class FishClient:
         porcupine = None
         try:
             leopard = pvleopard.create(access_key=API_KEY)
-            recorder = PvRecorder(device_index=-1, frame_length=512)
+            recorder = PvRecorder(
+                device_index=MICROPHONE_INDEX, frame_length=512)
             porcupine = pvporcupine.create(
                 access_key=API_KEY, keyword_paths=[KEYWORD_PATH],
                 sensitivities=[0.8])
 
-            print('Picovoice pipeline running')
+            print(f'Picovoice pipeline running using device index: {
+                  MICROPHONE_INDEX}')
 
             recorder.start()
             while self.running:
@@ -121,6 +141,12 @@ class FishClient:
                 keyword_index = porcupine.process(pcm)
                 if keyword_index >= 0:
                     print('Wake word detected')
+
+                    # Capture image in parallel
+                    image_holder = {}
+                    capture_thread = threading.Thread(
+                        target=self.capture_image_async, args=(image_holder,))
+                    capture_thread.start()
 
                     if self.fish:
                         listen_thread = threading.Thread(
@@ -134,12 +160,21 @@ class FishClient:
 
                     if self.fish:
                         listen_thread.join()
+
+                    # Ensure image capture is done
+                    capture_thread.join()
+
                     transcript, _ = leopard.process(audio_frames)
                     print(f'pico transcription: {transcript}')
 
                     if transcript:
-                        requests.post(f"{CLOUD_URL}/generate_query",
-                                      data={'user_text': transcript})
+                        payload = {'user_text': transcript}
+                        if 'data' in image_holder:
+                            payload['image_data'] = image_holder['data']
+                            print("Attaching image data to request")
+
+                        requests.post(
+                            f"{CLOUD_URL}/generate_query", data=payload)
                         print("Sent query to cloud.")
         except Exception as e:
             print(f'Audio Error: {e}')

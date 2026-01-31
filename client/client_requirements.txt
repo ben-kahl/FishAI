@@ -8,3 +8,4 @@ pvrecorder
 pvporcupine
 mutagen
 psutil
+opencv-python
