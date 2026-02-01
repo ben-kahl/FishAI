@@ -8,15 +8,15 @@ load_dotenv()
 API_KEY = os.getenv('ELEVENLABS_API_KEY')
 
 hank = '6F5Zhi321D3Oq7v1oNT4'
-james = 'EkK5I93UQWFDigLMpZcX'
-voice_ids = [hank, james]
+adam = 'pNInz6obpgDQGcFmaJgB'
+voice_ids = [hank]
 
 client = ElevenLabs(
     api_key=API_KEY,
 )
 
 
-def generate_audio(text, voice_id=voice_ids[0]):
+def generate_audio(text, voice_id=adam):
     '''
     Returns a tuple (audio_bytes, timestamps)
     '''
