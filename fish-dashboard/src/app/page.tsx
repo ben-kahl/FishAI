@@ -30,7 +30,6 @@ export default function Home() {
     "sassy",
     "strange",
     "shakespere",
-    "beavis",
   ];
 
   const handleCommand = async (endpoint: string, formData: FormData) => {
