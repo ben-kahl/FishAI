@@ -36,6 +36,7 @@ def gemini_request(text, selected_personality="normal", image_data=None):
         system_instruction = personalities[selected_personality]
     else:
         system_instruction = personalities["normal"]
+        system_instruction += " Also reference any relevant information from the attached image when fulfilling the user's request"
 
     contents = [text]
     if image_data:
@@ -43,7 +44,6 @@ def gemini_request(text, selected_personality="normal", image_data=None):
             image_bytes = base64.b64decode(image_data)
             contents.append(types.Part.from_bytes(
                 data=image_bytes, mime_type="image/jpeg"))
-            contents[0] += " Also reference any relevant information from the attached image when fulfilling the user's request"
         except Exception as e:
             print(f"Error processing image data: {e}")
 

@@ -115,16 +115,24 @@ def generate_query():
 
     if not user_text:
         return jsonify({'error': 'No text input into form'}), 400
-
     try:
-
         gemini_res = gemini_handler.gemini_request(
             user_text, selected_personality=personality, image_data=image_data)
+
+        if not gemini_res:
+            return jsonify({"error": "Gemini failed to generate a response"}), 500
+
     except Exception as e:
         return jsonify({"error": f"Gemini Error: {str(e)}"}), 500
+
+    # 2. Handle Audio Generation
     try:
         audio_bytes, timestamps = eleven_labs_handler.generate_audio(
             gemini_res)
+
+        if audio_bytes is None:
+            return jsonify({"error": "ElevenLabs failed to generate audio. Check server logs."}), 500
+
     except Exception as e:
         return jsonify({"error": f"Error generating speech: {e}"}), 500
     audio_b64_string = base64.b64encode(audio_bytes).decode('utf-8')
