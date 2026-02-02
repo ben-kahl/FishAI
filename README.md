@@ -1,7 +1,5 @@
 <a id="readme-top"></a>
 
-[![LinkedIn][linkedin-shield]][https://www.linkedin.com/in/ben-kahl/]
-
 <br />
 <div align="center">
 <h3 align="center">FishAI</h3>
