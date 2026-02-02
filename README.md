@@ -7,12 +7,12 @@
 <h3 align="center">FishAI</h3>
 
   <p align="center">
-    A fully fledged AI powered assitant running on a Big Mouth Billy Bass! FishAI runs a web based configuration and testing site alongside a voice powered response pipeline all on a Raspberry Pi 4b. It utilizes Picovoice Porcupine for wake word detection, Picovoice Leopard for speech to text transcription, Google Gemini Flash 2.5 for responses, and ElevenLabs for voice synthesis.
+    A fully fledged AI powered assistant running on a Big Mouth Billy Bass! <br />
+    FishAI has evolved into a hybrid edge/cloud IoT device. The "Fish" (Client) runs on a Raspberry Pi with vision and audio processing, while the "Brain" (Server) runs in the cloud (or locally) handling intelligence, state, and complex logic.
   </p>
 </div>
 
 
-<!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -25,7 +25,8 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#hardware-prerequisites">Hardware Prerequisites</a></li>
+        <li><a href="#software-architecture">Software Architecture</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
@@ -39,93 +40,149 @@
 
 
 
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is a silly little summer project that I got the idea for after seeing GPTARS.ai on Youtube make this and stumbling across a Big Mouth Billy Bass at a thrift store. As his code and process aren't available online, I decided to make my own open-source version.
+What started as a silly summer project to clone GPTARS.ai has evolved into a possibly over-engineered IoT platform. The project now utilizes a **Client-Server architecture**:
+
+1.  **The Fish (Client):** A Raspberry Pi 4b inside the fish that handles:
+    * **Wake Word Detection:** Uses Picovoice Porcupine to listen for keywords.
+    * **Vision:** Captures images via a connected camera to send to the AI.
+    * **Animatronics:** Controls the mouth, head, and tail via H-Bridges.
+    * **Audio:** Plays responses using `mpg123`.
+    * **Health Monitoring:** Reports CPU/Temp stats to the dashboard.
+
+2.  **The Brain (Cloud/Server):** A Flask-based backend (deployable to AWS App Runner via Terraform) that handles:
+    * **Intelligence:** Google Gemini Flash 2.5 for multimodal understanding (Text + Image).
+    * **Speech:** ElevenLabs for voice synthesis.
+    * **State Management:** Redis for command queuing (movements, speech) and health status.
+
+3.  **The Dashboard:** A Next.js web application for configuring personalities, monitoring device health, and manual control.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
 ### Built With
 
-* Python
-* Google Gemini
-* Picovoice
-* Elevenlabs
-* A Fish
+* **Hardware Control:** Python, OpenCV (Computer Vision)
+* **AI Services:** Google Gemini, Picovoice, ElevenLabs
+* **Backend:** Flask, Redis, Docker
+* **Frontend:** Next.js, React, TypeScript
+* **Infrastructure:** AWS (App Runner, ECR), Terraform
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+Because the project is split into three parts (Client, Server, Dashboard), setup is a bit more involved than before.
 
-### Prerequisites
+### Hardware Prerequisites
 
-To get started, you'll need a few hardware and software components
-
-#### Hardware
-* Rasberry Pi (I used a 4b 2gb, but it should work on anything newer than a Pi 3)
-* Big Mouth Billy Bass (Or a animitronic of your choice)
-* Microphone (I used a INMP441 MEMS mic, but a usb mic should work too)
-* 2 H-Bridges
-* 9 volt battery/battery pack
-* Jumper wires for connecting everything together
-
-#### Software
-* The latest version of Raspbian
-* Python 3
+* Raspberry Pi (4b recommended)
+* Big Mouth Billy Bass
+* **Camera:** USB Webcam or Pi Camera (for vision capabilities)
+* **Microphone:** INMP441 MEMS mic or USB mic
+* 2 H-Bridges (for motor control)
+* 9V battery/power supply
+* Speaker/Audio output
 
 ### Installation
 
-1. Get API keys for Google Gemini, ElevenlabsAI, and Picovoice
-2. Clone the repo
-   ```sh
-   git clone https://github.com/ben-kahl/FishAI.git
-   ```
-3. Everything you need software-wise is included in requirements.txt, so go ahead and pip install that as shown below.
-  pip
-  ```sh
-  pip install -r requirements.txt
-  ```
-4. Enter your API keys in your own `.env`
-   ```python
-   ELEVENLABS_API_KEY=<YOUR_ELEVENLABS_API_KEY>
-   GEMINI_API_KEY=<YOUR_GEMINI_API_KEY>
-   PICOVOICE_API_KEY=<YOUR_PICOVOICE_API_KEY>
-   ```
-5. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin <your_github_username>/<your_repo>
-   git remote -v # confirm the changes
-   ```
+1.  **Get API Keys**
+    You will need keys for: **Google Gemini**, **ElevenLabs**, and **Picovoice**.
+
+2.  **Clone the Repo**
+    ```sh
+    git clone [https://github.com/ben-kahl/FishAI.git](https://github.com/ben-kahl/FishAI.git)
+    cd FishAI
+    ```
+
+#### Part 1: The Server (Cloud/Local)
+You can run the server locally or deploy it to AWS.
+
+* **Local Run:**
+    Ensure you have a local Redis instance running (`redis-server`).
+    ```sh
+    cd cloud
+    pip install -r cloud_requirements.txt
+    python server.py
+    ```
+
+* **AWS Deployment:**
+    Infrastructure is managed via Terraform.
+    ```sh
+    cd cloud
+    # Ensure AWS credentials are set
+    terraform init
+    terraform apply
+    ```
+
+#### Part 2: The Fish (Raspberry Pi)
+Run this on the Raspberry Pi.
+
+1.  Install system dependencies:
+    ```sh
+    sudo apt-get install mpg123 libatlas-base-dev
+    ```
+2.  Install Python dependencies:
+    ```sh
+    cd client
+    pip install -r client_requirements.txt
+    ```
+3.  Configure Environment:
+    Create a `.env` file in the `client/` directory:
+    ```env
+    PICOVOICE_API_KEY=<YOUR_KEY>
+    CLOUD_URL=http://<YOUR_SERVER_IP>:5000
+    MICROPHONE_INDEX=0
+    CAMERA_INDEX=0
+    ```
+4.  Start the Client:
+    ```sh
+    python main.py
+    ```
+
+#### Part 3: The Dashboard (Optional)
+A web interface to control the fish.
+
+1.  Navigate to dashboard:
+    ```sh
+    cd fish-dashboard
+    ```
+2.  Install and Run:
+    ```sh
+    npm install
+    npm next dev
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- USAGE EXAMPLES -->
 ## Usage
 
-To start the project, run the following command
-```sh
-   python main.py
-```
+Once everything is running:
+
+1.  **Voice Control:** Say the wake word (default: "Jarvis" or similar, based on your `.ppn` file). The Fish will wake up, snap a picture of what it sees, listen to your query, and respond using Gemini's multimodal capabilities.
+2.  **Web Control:** Open the Next.js dashboard to:
+    * Change the Fish's "Personality" (e.g., Sarcastic, Pirate, Helpful).
+    * View live health stats (Temperature, CPU load).
+    * Manually send text queries.
+    * Control volume.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- ROADMAP -->
 ## Roadmap
 
-- [O] Voice to Audio AI response Pipeline
-- [In-Progress] Website to configure settings and manually input queries
-- [In-Progress] Fully fledged fish speech and listening animations
+- [x] Voice to Audio AI response Pipeline
+- [x] **Vision Capabilities:** The fish can now "see" you.
+- [x] **Cloud Infrastructure:** Terraform + AWS App Runner support.
+- [x] **Web Dashboard:** Full Next.js control panel.
+- [x] **Personality Engine:** Dynamic personality switching via Redis.
 
 See the [open issues](https://github.com/ben-kahl/FishAI/issues) for a full list of proposed features (and known issues).
 
@@ -133,13 +190,9 @@ See the [open issues](https://github.com/ben-kahl/FishAI/issues) for a full list
 
 
 
-<!-- CONTRIBUTING -->
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -150,16 +203,14 @@ Don't forget to give the project a star! Thanks again!
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-<!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- CONTACT -->
 ## Contact
 
 Ben Kahl - [linkedin-url](https://www.linkedin.com/in/ben-kahl/)
@@ -167,28 +218,3 @@ Ben Kahl - [linkedin-url](https://www.linkedin.com/in/ben-kahl/)
 Project Link: [https://github.com/ben-kahl/FishAI](https://github.com/ben-kahl/FishAI)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* Thank you to GPTARS.ai for the idea!
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/ben-kahl/FishAI.svg?style=for-the-badge
-[contributors-url]: https://github.com/ben-kahl/FishAI/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/ben-kahl/FishAI.svg?style=for-the-badge
-[forks-url]: https://github.com/ben-kahl/FishAI/network/members
-[stars-shield]: https://img.shields.io/github/stars/ben-kahl/FishAI.svg?style=for-the-badge
-[stars-url]: https://github.com/ben-kahl/FishAI/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ben-kahl/FishAI.svg?style=for-the-badge
-[issues-url]: https://github.com/ben-kahl/FishAI/issues
-[license-shield]: https://img.shields.io/github/license/ben-kahl/FishAI.svg?style=for-the-badge
-[license-url]: https://github.com/ben-kahl/FishAI/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/ben-kahl
