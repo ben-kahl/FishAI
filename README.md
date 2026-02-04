@@ -82,7 +82,7 @@ Because the project is split into three parts (Client, Server, Dashboard), setup
 * Big Mouth Billy Bass
 * **Camera:** USB Webcam or Pi Camera (for vision capabilities)
 * **Microphone:** INMP441 MEMS mic or USB mic
-* 2 H-Bridges (for motor control)
+* 3 H-Bridges (for motor control)
 * 9V battery/power supply
 * Speaker/Audio output
 
@@ -165,7 +165,7 @@ Once everything is running:
 
 1.  **Voice Control:** Say the wake word (default: "Jarvis" or similar, based on your `.ppn` file). The Fish will wake up, snap a picture of what it sees, listen to your query, and respond using Gemini's multimodal capabilities.
 2.  **Web Control:** Open the Next.js dashboard to:
-    * Change the Fish's "Personality" (e.g., Sarcastic, Pirate, Helpful).
+    * Change the Fish's "Personality" (e.g., Normal, Sassy, Excited).
     * View live health stats (Temperature, CPU load).
     * Manually send text queries.
     * Control volume.
